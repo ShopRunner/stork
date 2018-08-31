@@ -43,7 +43,8 @@ Steps for making a pull request:
      pytest
      flake8 apparate tests
 
-8. Submit a PR!
+8. Submit a PR! Please submit your PR against the WIP branch - someone will review your code, then when it is ready merge it into WIP. Once there tests and linting will be run automatically, and once that is verified we will merge WIP into master.
+
 
 Note: several of the tests rely on the ``.apparatecfg`` file, so make sure to run ``apparate configure`` before running tests. If you want to run tests using a different token than is in your ``.apparatecfg`` file, you can also pass in the values directly, as shown in the second example. Values passed as options will override those in the config.
 
