@@ -33,11 +33,13 @@ Steps for making a pull request:
 5. Write some awesome useful code
 
 6. Update unittests, docs, and CHANGELOG - to view docs locally::
+     
      cd docs/
      make docs
      open _build/html/index.html
 
 7. Double-check that unittests pass and the linter doesn't complain::
+     
      pytest
      flake8 apparate tests
 
