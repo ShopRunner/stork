@@ -1,0 +1,49 @@
+# this would not be an editable Jenkinsfile in the repo, but a static Jenkins job defined by devops
+# usernames and passwords not in Jenkins yet, need to decide which account to use
+# master and wip branches should be protected
+
+node {
+    checkout scm 
+
+    docker.image('python:3.6').inside('-u root') {
+
+        if (env.BRANCH_NAME == 'master' or env.BRANCH_NAME == 'wip') {
+
+	    stage('Run linting') {
+                sh('pip install flake8')
+		sh('flake8 hermiones_handbag tests')
+            }
+
+            stage('Build egg') {
+                sh('pip install --upgrade pip wheel')
+                sh('python setup.py sdist bdist_wheel')
+            }
+
+            if (env.BRANCH_NAME == 'wip') {
+                stage('Push egg to test pypi') {
+                    withCredentials([[
+                        $class: 'UsernamePasswordMultiBinding', 
+                        credentialsId: 'testpypi',
+            	        usernameVariable: 'TWINE_USERNAME',
+            	        passwordVariable: 'TWINE_PASSWORD'
+                    ]]) {
+                        sh('twine upload dist/* -r testpypi')
+                    }
+                }
+            }
+
+            if (env.BRANCH_NAME == 'wip') {
+                stage('Push egg to test_pypi') {
+                    withCredentials([[
+                        $class: 'UsernamePasswordMultiBinding', 
+                        credentialsId: 'pypi',
+            	        usernameVariable: 'TWINE_USERNAME',
+            	        passwordVariable: 'TWINE_PASSWORD'
+                    ]]) {
+                        sh('twine upload dist/*')
+                    }
+                }
+            }
+        }
+    }
+}
