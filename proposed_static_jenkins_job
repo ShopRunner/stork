@@ -3,21 +3,21 @@
 # master and wip branches should be protected
 
 node {
-    checkout scm 
+    checkout scm
 
     docker.image('python:3.6').inside('-u root') {
 
         if (env.BRANCH_NAME == 'master' or env.BRANCH_NAME == 'wip') {
 
-	    stage('Run linting') {
+        stage('Run linting') {
                 sh('pip install flake8')
-		sh('flake8 apparate tests')
+                sh('flake8 apparate tests')
             }
 
 	    stage('Run tests') {
                 sh('pip install -r requirements-dev.txt')
-		sh('printf "[DEFAULT]\nhost = https://fake-org.cloud.databricks.com\nprod_folder = /databricks/folder\n" > ~/.apparatecfg')
-		sh('pytest -v --deselect tests/test_token_permissions.py')
+                sh('printf "[DEFAULT]\nhost = https://fake-org.cloud.databricks.com\nprod_folder = /databricks/folder\n" > ~/.apparatecfg')
+                sh('pytest -v --deselect tests/test_token_permissions.py')
             }
 
             stage('Build egg') {
@@ -28,10 +28,10 @@ node {
             if (env.BRANCH_NAME == 'wip') {
                 stage('Push egg to test pypi') {
                     withCredentials([[
-                        $class: 'UsernamePasswordMultiBinding', 
+                        $class: 'UsernamePasswordMultiBinding',
                         credentialsId: 'testpypi',
-            	        usernameVariable: 'TWINE_USERNAME',
-            	        passwordVariable: 'TWINE_PASSWORD'
+                        usernameVariable: 'TWINE_USERNAME',
+                        passwordVariable: 'TWINE_PASSWORD'
                     ]]) {
                         sh('twine upload --repository-url https://test.pypi.org/legacy/ dist/*')
                     }
@@ -41,10 +41,10 @@ node {
             if (env.BRANCH_NAME == 'master') {
                 stage('Push egg to pypi') {
                     withCredentials([[
-                        $class: 'UsernamePasswordMultiBinding', 
+                        $class: 'UsernamePasswordMultiBinding',
                         credentialsId: 'pypi',
-            	        usernameVariable: 'TWINE_USERNAME',
-            	        passwordVariable: 'TWINE_PASSWORD'
+                        usernameVariable: 'TWINE_USERNAME',
+                        passwordVariable: 'TWINE_PASSWORD'
                     ]]) {
                         sh('twine upload dist/*')
                     }
