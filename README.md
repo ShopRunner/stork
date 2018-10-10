@@ -16,7 +16,7 @@ As we set out to automate this using Databrick's library API, we realized that t
 
 Apparate is a tool to manage libraries in Databricks in an automated fashion. It allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs.
 
-For a more detailed API and tutorials, check out the [docs](apparate.readthedocs.io).
+For a more detailed API and tutorials, check out the [docs](https://apparate.readthedocs.io/en/latest/index.html).
 
 ## Installation
 
@@ -61,4 +61,4 @@ NOTE: This package relies on the naming conventions used by setuptools - it will
 ## Contributing
 See a way for apparate to improve? We welcome contributions in the form of issues or pull requests!
 
-Please check out the [contributing](apparate.readthedocs.io/en/latest/contrib) page for more information.
+Please check out the [contributing](https://apparate.readthedocs.io/en/latest/contrib.html) page for more information.
