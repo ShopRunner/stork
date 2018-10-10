@@ -11,11 +11,17 @@ node {
 
 	    stage('Run linting') {
                 sh('pip install flake8')
-		sh('flake8 hermiones_handbag tests')
+		sh('flake8 apparate tests')
+            }
+
+	    stage('Run tests') {
+                sh('pip install -r requirements-dev.txt')
+		sh('printf "[DEFAULT]\nhost = https://fake-org.cloud.databricks.com\nprod_folder = /databricks/folder\n" > ~/.apparatecfg')
+		sh('pytest -v --deselect tests/test_token_permissions.py')
             }
 
             stage('Build egg') {
-                sh('pip install --upgrade pip wheel')
+                sh('pip install --upgrade pip wheel twine')
                 sh('python setup.py sdist bdist_wheel')
             }
 
@@ -27,13 +33,13 @@ node {
             	        usernameVariable: 'TWINE_USERNAME',
             	        passwordVariable: 'TWINE_PASSWORD'
                     ]]) {
-                        sh('twine upload dist/* -r testpypi')
+                        sh('twine upload --repository-url https://test.pypi.org/legacy/ dist/*')
                     }
                 }
             }
 
-            if (env.BRANCH_NAME == 'wip') {
-                stage('Push egg to test_pypi') {
+            if (env.BRANCH_NAME == 'master') {
+                stage('Push egg to pypi') {
                     withCredentials([[
                         $class: 'UsernamePasswordMultiBinding', 
                         credentialsId: 'pypi',

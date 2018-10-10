@@ -219,7 +219,12 @@ def test_delete_old_versions(id_nums, host, prod_folder):
 
 @mock.patch('apparate.update_databricks_library.load_egg')
 @responses.activate
-def test_update_databricks_already_exists(load_mock, capsys, prod_folder, host):
+def test_update_databricks_already_exists(
+        load_mock,
+        capsys,
+        prod_folder,
+        host,
+):
     responses.add(
         responses.GET,
         'https://test-api',
