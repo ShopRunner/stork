@@ -14,6 +14,7 @@ setup(
     version=__version__,
     description='Update libraries on Databricks',
     long_description=readme+'\n\n\nLicense\n-------\n'+license,
+    long_description_content_type='text/markdown',
     author='Hanna Torrence',
     author_email='htorrence@shoprunner.com',
     url='https://github.com/shoprunner/apparate',
