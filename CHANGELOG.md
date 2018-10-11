@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 # [2.1.0] - 2018-10-11
 ### Added
- - Now with deployment pipeline! Bumping version to test deployment flow
+ - Now with deployment pipeline!
+ - Fixes markdown rendering on PyPi
 
 # [2.0.1] - 2018-10-10
 ### Fixed
