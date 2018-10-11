@@ -1,5 +1,5 @@
 # Apparate
-Make your libraries magically appear in Databricks.
+Make your libraries magically appear in Databricks
 
 ![apparate](https://pa1.narvii.com/6547/b8fd048a32aa591dbae528f4a80e67cb87112317_hq.gif)
 
