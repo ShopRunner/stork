@@ -4,6 +4,8 @@ The core of the program, update_databricks_library handles all the logic and
  in Databricks.
 """
 import json
+import re
+import os
 
 import requests
 from configparser import NoOptionError
@@ -35,6 +37,92 @@ class APIError(Exception):
 
     def __str__(self):
         return '{}: {}'.format(self.code, self.message)
+
+
+class FileNameError(Exception):
+    """
+    exception to handle when filename is not of correct pattern
+    """
+    def __init__(self, filename):
+        Exception.__init__(self, 'Filename \'{}\' was not correct pattern'.format(filename))
+        self.filename = filename
+
+
+class FilenameMatch(object):
+    """
+    Matches eggs or jars for both released and snapshot versions
+    Supported Patterns:
+      new_library-1.0.0-py3.6.egg
+      new_library-1.0.0-SNAPSHOT-py3.6.egg
+      new_library-1.0.0-SNAPSHOT-my-branch-py3.6.egg
+
+      new_library-1.0.0.egg
+      new_library-1.0.0-SNAPSHOT.egg
+      new_library-1.0.0-SNAPSHOT-my-branch.egg
+
+      new_library-1.0.0.jar
+      new_library-1.0.0-SNAPSHOT.jar
+      new_library-1.0.0-SNAPSHOT-my-branch.jar
+    """
+    file_pattern = r'([a-zA-Z0-9-\._]+)-((\d+)\.(\d+\.\d+)(?:-SNAPSHOT(?:[a-zA-Z_\-\.]+)?)?)(?:-py.+)?\.(egg|jar)'
+
+    def __init__(self, filename):
+        match = re.match(FilenameMatch.file_pattern, filename)
+        if match:
+            self.matched = True
+            self.library_name = match.group(1)
+            self.version = match.group(2)
+            self.major_version = match.group(3)
+            self.minor_version = match.group(4)
+            self.suffix = match.group(5)
+            self.is_egg = self.suffix == 'egg'
+        else:
+            self.matched = False
+            self.library_name = None
+            self.version = None
+            self.major_version = None
+            self.minor_version = None
+            self.suffix = None
+            self.is_egg = None
+
+
+def load_jar(filename, library_name, version, folder, token, host):
+    """
+    upload an jar to the Databricks filesystem.
+
+    Parameters
+    ----------
+    filename: string
+        local location of file to upload
+    library_name: string
+        base name of library (e.g. 'test_library')
+    version: string
+        version of library (e.g. '1.0.0')
+    folder: string
+        Databricks folder to upload to
+        (e.g. '/Users/htorrence@shoprunner.com/')
+    token: string
+        Databricks API key
+    host: string
+        Databricks host (e.g. https://my-organization.cloud.databricks.com)
+
+    Side Effects
+    ------------
+    uploads jar to Databricks
+    """
+    res = requests.post(
+        host + '/api/1.2/libraries/upload',
+        auth=('token', token),
+        data={
+            'libType': 'java-jar',
+            'name': '{0}-{1}'.format(library_name, version),
+            'folder': folder,
+        },
+        files={'uri': open(filename, 'rb')}
+    )
+
+    if res.status_code != 200:
+        raise APIError(res)
 
 
 def load_egg(filename, library_name, version, folder, token, host):
@@ -76,7 +164,7 @@ def load_egg(filename, library_name, version, folder, token, host):
         raise APIError(res)
 
 
-def get_job_list(library_name, major_version, library_mapping, token, host):
+def get_job_list(library_name, major_version, suffix, library_mapping, token, host):
     """
     get a list of jobs using the major version of the given library
 
@@ -86,6 +174,8 @@ def get_job_list(library_name, major_version, library_mapping, token, host):
         base name of library (e.g. 'test_library')
     major_version: string
         major version of library (e.g. '1')
+    suffix: string
+        the type of file, egg or jar
     library_mapping: dict
         first element of get_library_mapping output
     token: string
@@ -109,9 +199,9 @@ def get_job_list(library_name, major_version, library_mapping, token, host):
         for job in res.json()['jobs']:
             if 'libraries' in job['settings'].keys():
                 for library in job['settings']['libraries']:
-                    if 'egg' in library.keys():
+                    if suffix in library.keys():
                         try:  # if in prod_folder, mapping turns uri into name
-                            job_library_uri = library['egg'].split('/')[-1]
+                            job_library_uri = library[suffix].split('/')[-1]
                             job_library = library_mapping[job_library_uri]
                         except KeyError:
                             pass
@@ -134,7 +224,7 @@ def get_job_list(library_name, major_version, library_mapping, token, host):
                                     job_list.append({
                                         'job_id': job['job_id'],
                                         'job_name': job['settings']['name'],
-                                        'library_path': library['egg'],
+                                        'library_path': library[suffix],
                                     })
         return job_list
     else:
@@ -209,7 +299,7 @@ def get_library_mapping(prod_folder, token, host):
         raise APIError(res)
 
 
-def update_job_libraries(job_list, new_library_path, token, host):
+def update_job_libraries(job_list, suffix, new_library_path, token, host):
     """
     update libraries on jobs using same major version
 
@@ -217,6 +307,8 @@ def update_job_libraries(job_list, new_library_path, token, host):
     ----------
     job_list: list of strings
         output of get_job_list
+    suffix: string
+        the suffix of the library, egg or jar
     new_library_path: string
         path to library in dbfs (including uri)
     token: string
@@ -242,9 +334,9 @@ def update_job_libraries(job_list, new_library_path, token, host):
             job_specs.pop('settings')
             new_libraries = []
             for lib in settings['libraries']:
-                if 'egg' in lib.keys() and lib['egg'] == job['library_path']:
+                if suffix in lib.keys() and lib[suffix] == job['library_path']:
                     # replace entry for old library path with new one
-                    new_libraries.append({'egg': new_library_path})
+                    new_libraries.append({suffix: new_library_path})
                 else:
                     new_libraries.append(lib)
             settings['libraries'] = new_libraries
@@ -361,24 +453,29 @@ def update_databricks(path, token, folder, update_jobs, cleanup):
                          '`apparate configure` to get set up')
 
     # strip off prepended folders
-    filename = path.split('/')[-1]
-    # strip off version and '-py3.6.egg'
-    library_name = '-'.join(filename.split('-')[:-2])
-    # get version
-    version = filename.split('-')[-2]
-    # get major version (e.g. 1) and minor version (e.g. 0.0)
-    major_version, minor_version = version.split('.', 1)
+    filename = os.path.basename(path)
+    match = FilenameMatch(filename)
+
+    if not match.matched:
+        raise FileNameError(filename)
 
     try:
-        load_egg(path, library_name, version, folder, token, host)
-        print(
-            'new egg {}-{} loaded to Databricks'
-            .format(library_name, version)
-        )
+        if match.is_egg:
+            load_egg(path, match.library_name, match.version, folder, token, host)
+            print(
+                'new egg {}-{} loaded to Databricks'
+                .format(match.library_name, match.version)
+            )
+        else:
+            load_jar(path, match.library_name, match.version, folder, token, host)
+            print(
+                'new jar {}-{} loaded to Databricks'
+                    .format(match.library_name, match.version)
+            )
     except APIError as err:
         if err.code == 'http 500' and 'already exists' in err.message:
             print(
-                'this version ({}) already exists:'.format(version) +
+                'this version ({}) already exists:'.format(match.version) +
                 'if a change has been made please update your version number'
             )
             return
@@ -389,13 +486,14 @@ def update_databricks(path, token, folder, update_jobs, cleanup):
         library_map, id_nums = get_library_mapping(prod_folder, token, host)
         library_uri = [
             uri for uri, name in library_map.items()
-            if name == '{}-{}'.format(library_name, version)
+            if name == '{}-{}'.format(match.library_name, match.version)
         ][0]
         library_path = 'dbfs:/FileStore/jars/' + library_uri
 
         job_list = get_job_list(
-            library_name,
-            major_version,
+            match.library_name,
+            match.major_version,
+            match.suffix,
             library_map,
             token,
             host
@@ -406,7 +504,7 @@ def update_databricks(path, token, folder, update_jobs, cleanup):
         )
 
         if len(job_list) != 0:
-            update_job_libraries(job_list, library_path, token, host)
+            update_job_libraries(job_list, match.suffix, library_path, token, host)
             print(
                 'updated jobs: {}'
                 .format(', '.join([i['job_name'] for i in job_list]))
@@ -414,9 +512,9 @@ def update_databricks(path, token, folder, update_jobs, cleanup):
 
         if cleanup:
             old_versions = delete_old_versions(
-                library_name=library_name,
-                major_version=major_version,
-                minor_version=minor_version,
+                library_name=match.library_name,
+                major_version=match.major_version,
+                minor_version=match.minor_version,
                 id_nums=id_nums,
                 token=token,
                 prod_folder=prod_folder,

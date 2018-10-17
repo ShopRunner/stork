@@ -36,12 +36,12 @@ def _resolve_input(variable, variable_name, config_key, config):
     return variable
 
 
-@click.command(short_help='upload an egg')
+@click.command(short_help='upload an egg or jar')
 @click.option(
     '-p',
     '--path',
-    help=('path to egg file with name as output from setuptools '
-          '(e.g. dist/new_library-1.0.0-py3.6.egg)'),
+    help=('path to egg or jar file with name as output from setuptools '
+          '(e.g. dist/new_library-1.0.0-py3.6.egg or libs/new_library-1.0.0.jar)'),
     required=True
 )
 @click.option(

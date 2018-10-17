@@ -7,6 +7,7 @@ import requests
 from .unittest_helpers import compare_multiline_strings
 from apparate.update_databricks_library import (
     APIError,
+    FileNameError,
     load_egg,
     get_job_list,
     get_library_mapping,
@@ -83,6 +84,7 @@ def test_get_job_list(library_mapping, job_list, job_list_response, host):
     job_list_actual = get_job_list(
         library_name='test-library',
         major_version='1',
+        suffix='egg',
         library_mapping=library_mapping,
         token='',
         host=host,
@@ -178,6 +180,7 @@ def test_update_job_libraries(
         )
     update_job_libraries(
         job_list,
+        'egg',
         'dbfs:/FileStore/jars/some_library_uri',
         '',
         host
@@ -423,3 +426,37 @@ def test_update_databricks_wrong_folder(load_mock, capsys, host):
         '',
         host,
     )
+
+
+@mock.patch('apparate.update_databricks_library.load_jar')
+def test_update_databricks_with_jar_only_upload(load_mock, capsys, prod_folder, host):
+    update_databricks(
+        path='some/path/to/test-library-1.0.3.jar',
+        token='',
+        folder=prod_folder,
+        update_jobs=False,
+        cleanup=False,
+    )
+    out, _ = capsys.readouterr()
+    expected_out = 'new jar test-library-1.0.3 loaded to Databricks'
+    compare_multiline_strings(out, expected_out)
+    load_mock.assert_called_with(
+        'some/path/to/test-library-1.0.3.jar',
+        'test-library',
+        '1.0.3',
+        prod_folder,
+        '',
+        host,
+    )
+
+
+def test_update_databricks_filename_not_match(load_mock, capsys, prod_folder, host):
+    with pytest.raises(FileNameError) as err:
+        update_databricks(
+            path='some/path/to/test-library-1.0.3.zip',
+            token='',
+            folder=prod_folder,
+            update_jobs=False,
+            cleanup=False,
+        )
+        assert err.filename == 'test-library-1.0.3.zip'
