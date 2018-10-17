@@ -105,3 +105,7 @@ apparate_venv/
 
 # mac stuff
 .DS_Store
+
+# IntelliJ
+*.iml
+.idea
