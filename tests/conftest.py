@@ -9,6 +9,7 @@ def pytest_addoption(parser):
     parser.addoption('--host', action='store', default=None)
     parser.addoption('--prod_folder', action='store', default=None)
 
+
 def _resolve_test_config(metafunc, config, key):
     # makes value availible as a fixture with name key
     value = getattr(metafunc.config.option, key)
@@ -16,7 +17,7 @@ def _resolve_test_config(metafunc, config, key):
         value = config.get(PROFILE, key)
     if key in metafunc.fixturenames and value is not None:
         metafunc.parametrize(key, [value])
-    
+
 
 def pytest_generate_tests(metafunc):
     # This is called for every test. Only get/set command line arguments

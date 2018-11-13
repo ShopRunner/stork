@@ -8,7 +8,8 @@ from .unittest_helpers import compare_multiline_strings
 from apparate.update_databricks_library import (
     APIError,
     FileNameError,
-    load_egg,
+    FileNameMatch,
+    load_library,
     get_job_list,
     get_library_mapping,
     update_job_libraries,
@@ -22,8 +23,112 @@ def request_callback(request):
     return(200, {}, request.body)
 
 
+def test_filename_match_egg_with_py():
+    match = FileNameMatch('new_library-1.0.0-py3.6.egg')
+    assert match.library_name == 'new_library'
+    assert match.version == '1.0.0'
+    assert match.major_version == '1'
+    assert match.minor_version == '0.0'
+    assert match.suffix == 'egg'
+    assert match.lib_type == 'python-egg'
+
+
+def test_filename_match_egg_snapshot_with_py():
+    match = FileNameMatch('new_library-1.0.0-SNAPSHOT-py3.6.egg')
+    assert match.library_name == 'new_library'
+    assert match.version == '1.0.0-SNAPSHOT'
+    assert match.major_version == '1'
+    assert match.minor_version == '0.0'
+    assert match.suffix == 'egg'
+    assert match.lib_type == 'python-egg'
+
+
+def test_filename_match_egg_snapshot_branch_with_py():
+    match = FileNameMatch('new_library-1.0.0-SNAPSHOT-my-branch-py3.6.egg')
+    assert match.library_name == 'new_library'
+    assert match.version == '1.0.0-SNAPSHOT-my-branch'
+    assert match.major_version == '1'
+    assert match.minor_version == '0.0'
+    assert match.suffix == 'egg'
+    assert match.lib_type == 'python-egg'
+
+
+def test_filename_match_egg():
+    match = FileNameMatch('new_library-1.0.0.egg')
+    assert match.library_name == 'new_library'
+    assert match.version == '1.0.0'
+    assert match.major_version == '1'
+    assert match.minor_version == '0.0'
+    assert match.suffix == 'egg'
+    assert match.lib_type == 'python-egg'
+
+
+def test_filename_match_egg_snapshot():
+    match = FileNameMatch('new_library-1.0.0-SNAPSHOT.egg')
+    assert match.library_name == 'new_library'
+    assert match.version == '1.0.0-SNAPSHOT'
+    assert match.major_version == '1'
+    assert match.minor_version == '0.0'
+    assert match.suffix == 'egg'
+    assert match.lib_type == 'python-egg'
+
+
+def test_filename_match_egg_snapshot_branch():
+    match = FileNameMatch('new_library-1.0.0-SNAPSHOT-my-branch.egg')
+    assert match.library_name == 'new_library'
+    assert match.version == '1.0.0-SNAPSHOT-my-branch'
+    assert match.major_version == '1'
+    assert match.minor_version == '0.0'
+    assert match.suffix == 'egg'
+    assert match.lib_type == 'python-egg'
+
+
+def test_filename_match_jar():
+    match = FileNameMatch('new_library-1.0.0.jar')
+    assert match.library_name == 'new_library'
+    assert match.version == '1.0.0'
+    assert match.major_version == '1'
+    assert match.minor_version == '0.0'
+    assert match.suffix == 'jar'
+    assert match.lib_type == 'java-jar'
+
+
+def test_filename_match_jar_snapshot():
+    match = FileNameMatch('new_library-1.0.0-SNAPSHOT.jar')
+    assert match.library_name == 'new_library'
+    assert match.version == '1.0.0-SNAPSHOT'
+    assert match.major_version == '1'
+    assert match.minor_version == '0.0'
+    assert match.suffix == 'jar'
+    assert match.lib_type == 'java-jar'
+
+
+def test_filename_match_jar_snapshot_branch():
+    match = FileNameMatch('new_library-1.0.0-SNAPSHOT-my-branch.jar')
+    assert match.library_name == 'new_library'
+    assert match.version == '1.0.0-SNAPSHOT-my-branch'
+    assert match.major_version == '1'
+    assert match.minor_version == '0.0'
+    assert match.suffix == 'jar'
+    assert match.lib_type == 'java-jar'
+
+
+def test_filename_match_wrong_file_type():
+    with pytest.raises(FileNameError) as err:
+        FileNameMatch('test-library-1.0.3.zip')
+        assert err.filename == 'test-library-1.0.3.zip'
+
+
+def test_filename_match_garbage_version():
+    with pytest.raises(FileNameError) as err:
+        FileNameMatch('test-library-1.0.3-askjdhfa.egg')
+        assert err.filename == 'test-library-1.0.3-askjdhfa.egg'
+
+
 @responses.activate
-def test_load_egg(host, prod_folder):
+def test_load_library_egg(host, prod_folder):
+    filename = 'test-library-1.0.3-py3.6.egg'
+
     responses.add(
         responses.POST,
         host + '/api/1.2/libraries/upload',
@@ -34,10 +139,9 @@ def test_load_egg(host, prod_folder):
         'builtins.open',
         mock.mock_open(read_data='egg file contents')
     ):
-        load_egg(
-            filename='test-library-1.0.3-py3.6.egg',
-            library_name='test-library',
-            version='1.0.3',
+        load_library(
+            filename=filename,
+            match=FileNameMatch(filename),
             folder=prod_folder,
             token='',
             host=host,
@@ -45,7 +149,32 @@ def test_load_egg(host, prod_folder):
 
 
 @responses.activate
-def test_load_egg_APIError(host, prod_folder):
+def test_load_library_jar(host, prod_folder):
+    filename = 'test-library-1.0.3.jar'
+
+    responses.add(
+        responses.POST,
+        host + '/api/1.2/libraries/upload',
+        status=200
+    )
+
+    with mock.patch(
+        'builtins.open',
+        mock.mock_open(read_data='jar file contents')
+    ):
+        load_library(
+            filename=filename,
+            match=FileNameMatch(filename),
+            folder=prod_folder,
+            token='',
+            host=host,
+        )
+
+
+@responses.activate
+def test_load_library_APIError(host, prod_folder):
+    filename = 'test-library-1.0.3-py3.6.egg'
+
     responses.add(
         responses.POST,
         host + '/api/1.2/libraries/upload',
@@ -57,10 +186,9 @@ def test_load_egg_APIError(host, prod_folder):
             'builtins.open',
             mock.mock_open(read_data='egg file contents')
         ):
-            load_egg(
-                filename='test-library-1.0.3-py3.6.egg',
-                library_name='test-library',
-                version='1.0.3',
+            load_library(
+                filename=filename,
+                match=FileNameMatch(filename),
                 folder=prod_folder,
                 token='',
                 host=host,
@@ -68,9 +196,6 @@ def test_load_egg_APIError(host, prod_folder):
         assert err.code == 'http 401'
 
 
-@pytest.mark.usefixtures('library_mapping')
-@pytest.mark.usefixtures('job_list')
-@pytest.mark.usefixtures('job_list_response')
 @responses.activate
 def test_get_job_list(library_mapping, job_list, job_list_response, host):
 
@@ -82,9 +207,7 @@ def test_get_job_list(library_mapping, job_list, job_list_response, host):
     )
 
     job_list_actual = get_job_list(
-        library_name='test-library',
-        major_version='1',
-        suffix='egg',
+        match=FileNameMatch('test-library-1.1.2.egg'),
         library_mapping=library_mapping,
         token='',
         host=host,
@@ -94,17 +217,6 @@ def test_get_job_list(library_mapping, job_list, job_list_response, host):
     assert job_list_actual == job_list
 
 
-@pytest.mark.usefixtures('library_mapping')
-@pytest.mark.usefixtures('id_nums')
-@pytest.mark.usefixtures('library_8')
-@pytest.mark.usefixtures('library_7')
-@pytest.mark.usefixtures('library_6')
-@pytest.mark.usefixtures('library_5')
-@pytest.mark.usefixtures('library_4')
-@pytest.mark.usefixtures('library_3')
-@pytest.mark.usefixtures('library_2')
-@pytest.mark.usefixtures('library_1')
-@pytest.mark.usefixtures('library_list_response')
 @responses.activate
 def test_get_library_mapping(
     library_list_response,
@@ -156,9 +268,6 @@ def test_get_library_mapping(
     assert library_mapping == library_map_actual
 
 
-@pytest.mark.usefixtures('job_list')
-@pytest.mark.usefixtures('job_update_response_list_old')
-@pytest.mark.usefixtures('job_update_response_list_new')
 @responses.activate
 def test_update_job_libraries(
     job_list,
@@ -180,7 +289,7 @@ def test_update_job_libraries(
         )
     update_job_libraries(
         job_list,
-        'egg',
+        FileNameMatch('test_library-1.2.3.egg'),
         'dbfs:/FileStore/jars/some_library_uri',
         '',
         host
@@ -203,9 +312,7 @@ def test_delete_old_versions(id_nums, host, prod_folder):
             callback=request_callback,
         )
     actual_deleted_libraries = delete_old_versions(
-        library_name='test-library',
-        major_version='1',
-        minor_version='0.3',
+        match=FileNameMatch('test-library-1.0.3-SNAPSHOT.egg'),
         id_nums=id_nums,
         token='',
         prod_folder=prod_folder,
@@ -220,7 +327,7 @@ def test_delete_old_versions(id_nums, host, prod_folder):
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_egg')
+@mock.patch('apparate.update_databricks_library.load_library')
 @responses.activate
 def test_update_databricks_already_exists(
         load_mock,
@@ -258,18 +365,14 @@ def test_update_databricks_already_exists(
     compare_multiline_strings(out, expected_out)
     load_mock.assert_called_with(
         'some/path/to/test-library-1.0.1-py3.6.egg',
-        'test-library',
-        '1.0.1',
+        FileNameMatch('test-library-1.0.1-py3.6.egg'),
         '/other/folder',
         '',
         host,
     )
 
 
-@pytest.mark.usefixtures('job_list')
-@pytest.mark.usefixtures('id_nums')
-@pytest.mark.usefixtures('library_mapping')
-@mock.patch('apparate.update_databricks_library.load_egg')
+@mock.patch('apparate.update_databricks_library.load_library')
 @mock.patch('apparate.update_databricks_library.get_job_list')
 @mock.patch('apparate.update_databricks_library.get_library_mapping')
 @mock.patch('apparate.update_databricks_library.update_job_libraries')
@@ -302,30 +405,27 @@ def test_update_databricks_update_jobs(
 
     out, _ = capsys.readouterr()
     expected_out = (
-        'new egg test-library-1.0.3 loaded to Databricks\n'
+        'new library test-library-1.0.3 loaded to Databricks\n'
         'current major version of library used by jobs: job_3\n'
         'updated jobs: job_3\n'
         'removed old versions: test-library-1.0.1, test-library-1.0.2\n'
     )
-
+    match = FileNameMatch('test-library-1.0.3-py3.6.egg')
     compare_multiline_strings(out, expected_out)
     load_mock.assert_called_with(
-        path, 'test-library', '1.0.3', prod_folder, '', host,
+        path, match, prod_folder, '', host,
     )
-    job_mock.assert_called_with(
-        'test-library', '1', library_mapping, '', host,
-    )
+    job_mock.assert_called_with(match, library_mapping, '', host)
     lib_mock.assert_called_with(prod_folder, '', host)
     update_mock.assert_called_with(
         job_list,
+        match,
         'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg',
         '',
         host,
     )
     delete_mock.assert_called_with(
-        library_name='test-library',
-        major_version='1',
-        minor_version='0.3',
+        match,
         id_nums=id_nums,
         token='',
         prod_folder=prod_folder,
@@ -333,10 +433,7 @@ def test_update_databricks_update_jobs(
     )
 
 
-@pytest.mark.usefixtures('job_list')
-@pytest.mark.usefixtures('id_nums')
-@pytest.mark.usefixtures('library_mapping')
-@mock.patch('apparate.update_databricks_library.load_egg')
+@mock.patch('apparate.update_databricks_library.load_library')
 @mock.patch('apparate.update_databricks_library.get_job_list')
 @mock.patch('apparate.update_databricks_library.get_library_mapping')
 @mock.patch('apparate.update_databricks_library.update_job_libraries')
@@ -364,27 +461,28 @@ def test_update_databricks_update_jobs_no_cleanup(
     )
     out, _ = capsys.readouterr()
     expected_out = (
-        'new egg test-library-1.0.3 loaded to Databricks\n'
+        'new library test-library-1.0.3 loaded to Databricks\n'
         'current major version of library used by jobs: job_3\n'
         'updated jobs: job_3\n'
     )
     compare_multiline_strings(out, expected_out)
+
+    match = FileNameMatch('test-library-1.0.3-py3.6.egg')
     load_mock.assert_called_with(
-        path, 'test-library', '1.0.3', prod_folder, '', host,
+        path, match, prod_folder, '', host,
     )
-    job_mock.assert_called_with(
-        'test-library', '1', library_mapping, '', host,
-    )
+    job_mock.assert_called_with(match, library_mapping, '', host)
     lib_mock.assert_called_with(prod_folder, '', host)
     update_mock.assert_called_with(
         job_list,
+        match,
         'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg',
         '',
         host,
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_egg')
+@mock.patch('apparate.update_databricks_library.load_library')
 def test_update_databricks_only_upload(load_mock, capsys, prod_folder, host):
     update_databricks(
         path='some/path/to/test-library-1.0.3-py3.6.egg',
@@ -394,19 +492,18 @@ def test_update_databricks_only_upload(load_mock, capsys, prod_folder, host):
         cleanup=False,
     )
     out, _ = capsys.readouterr()
-    expected_out = 'new egg test-library-1.0.3 loaded to Databricks'
+    expected_out = 'new library test-library-1.0.3 loaded to Databricks'
     compare_multiline_strings(out, expected_out)
     load_mock.assert_called_with(
         'some/path/to/test-library-1.0.3-py3.6.egg',
-        'test-library',
-        '1.0.3',
+        FileNameMatch('test-library-1.0.3-py3.6.egg'),
         prod_folder,
         '',
         host,
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_egg')
+@mock.patch('apparate.update_databricks_library.load_library')
 def test_update_databricks_wrong_folder(load_mock, capsys, host):
     update_databricks(
         path='some/path/to/test-library-1.0.3-py3.6.egg',
@@ -416,20 +513,24 @@ def test_update_databricks_wrong_folder(load_mock, capsys, host):
         cleanup=True,
     )
     out, err = capsys.readouterr()
-    expected_out = 'new egg test-library-1.0.3 loaded to Databricks'
+    expected_out = 'new library test-library-1.0.3 loaded to Databricks'
     compare_multiline_strings(out, expected_out)
     load_mock.assert_called_with(
         'some/path/to/test-library-1.0.3-py3.6.egg',
-        'test-library',
-        '1.0.3',
+        FileNameMatch('test-library-1.0.3-py3.6.egg'),
         '/other/folder',
         '',
         host,
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_jar')
-def test_update_databricks_with_jar_only_upload(load_mock, capsys, prod_folder, host):
+@mock.patch('apparate.update_databricks_library.load_library')
+def test_update_databricks_with_jar_only_upload(
+    load_mock,
+    capsys,
+    prod_folder,
+    host,
+):
     update_databricks(
         path='some/path/to/test-library-1.0.3.jar',
         token='',
@@ -438,19 +539,24 @@ def test_update_databricks_with_jar_only_upload(load_mock, capsys, prod_folder, 
         cleanup=False,
     )
     out, _ = capsys.readouterr()
-    expected_out = 'new jar test-library-1.0.3 loaded to Databricks'
+    expected_out = 'new library test-library-1.0.3 loaded to Databricks'
     compare_multiline_strings(out, expected_out)
     load_mock.assert_called_with(
         'some/path/to/test-library-1.0.3.jar',
-        'test-library',
-        '1.0.3',
+        FileNameMatch('test-library-1.0.3.jar'),
         prod_folder,
         '',
         host,
     )
 
 
-def test_update_databricks_filename_not_match(load_mock, capsys, prod_folder, host):
+@mock.patch('apparate.update_databricks_library.load_library')
+def test_update_databricks_filename_not_match(
+    load_mock,
+    capsys,
+    prod_folder,
+    host,
+):
     with pytest.raises(FileNameError) as err:
         update_databricks(
             path='some/path/to/test-library-1.0.3.zip',
