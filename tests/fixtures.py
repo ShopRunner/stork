@@ -1,7 +1,7 @@
 # flake8: noqa E501
 
 import pytest
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 from apparate.update_databricks_library import FileNameMatch
 
 
@@ -326,7 +326,7 @@ def library_mapping():
 
 @pytest.fixture
 def existing_config():
-    existing_config = SafeConfigParser()
+    existing_config = ConfigParser()
     existing_config['DEFAULT'] = {
         'host': 'test_host',
         'token': 'test_token',
@@ -336,6 +336,6 @@ def existing_config():
 
 @pytest.fixture
 def empty_config():
-    empty_config = SafeConfigParser()
+    empty_config = ConfigParser()
     empty_config['DEFAULT'] = {}
     return empty_config

@@ -1,12 +1,17 @@
+import logging
 from os.path import expanduser, join
 from unittest import mock
 
 import pytest
 from click.testing import CliRunner
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 
 from apparate.configure import configure
 from apparate.cli_commands import upload, upload_and_update
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('apparate.cli_commands')
 
 
 def test_configure_no_existing_config():
@@ -40,7 +45,6 @@ def test_configure_no_existing_config():
                 'test_folder\n'
             ),
         )
-        print(m_open.call_args_list)
         m_open.assert_has_calls(expected_call_list, any_order=True)
 
     assert not result.exception
@@ -78,7 +82,6 @@ def test_configure_extra_slash_in_host():
                 'test_folder\n'
             ),
         )
-        print(m_open.call_args_list)
         m_open.assert_has_calls(expected_call_list, any_order=True)
 
     assert not result.exception
@@ -116,7 +119,6 @@ def test_configure_extra_slash_in_folder():
                 'test_folder/\n'
             ),
         )
-        print(m_open.call_args_list)
         m_open.assert_has_calls(expected_call_list, any_order=True)
 
     assert not result.exception
@@ -157,7 +159,6 @@ def test_configure_no_http_in_host():
                 'test_folder\n'
             ),
         )
-        print(m_open.call_args_list)
         m_open.assert_has_calls(expected_call_list, any_order=True)
 
     assert not result.exception
@@ -179,6 +180,7 @@ def test_upload(update_databricks_mock, config_mock, existing_config):
 
     config_mock.assert_called_once()
     update_databricks_mock.assert_called_with(
+        logger,
         '/path/to/egg',
         'test_token',
         'test_folder',
@@ -214,6 +216,7 @@ def test_upload_all_options(
 
     config_mock.assert_called_once()
     update_databricks_mock.assert_called_with(
+        logger,
         '/path/to/egg',
         'new_token',
         'new_folder',
@@ -278,6 +281,7 @@ def test_upload_and_update_cleanup(
 
     config_mock.assert_called_once()
     update_databricks_mock.assert_called_with(
+        logger,
         '/path/to/egg',
         'test_token',
         'test_folder',
@@ -306,6 +310,7 @@ def test_upload_and_update_no_cleanup(
 
     config_mock.assert_called_once()
     update_databricks_mock.assert_called_with(
+        logger,
         '/path/to/egg',
         'test_token',
         'test_folder',
@@ -318,7 +323,7 @@ def test_upload_and_update_no_cleanup(
 @mock.patch('apparate.cli_commands._load_config')
 def test_upload_and_update_missing_token(config_mock):
 
-    existing_config = SafeConfigParser()
+    existing_config = ConfigParser()
     existing_config['DEFAULT'] = {'prod_folder': 'test_folder'}
     config_mock.return_value = existing_config
 
