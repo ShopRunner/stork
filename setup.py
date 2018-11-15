@@ -22,6 +22,7 @@ setup(
     packages=find_packages(exclude=('tests', 'docs')),
     install_requires=[
         'click',
+        'click_log',
         'configparser',
         'requests',
         'simplejson'
