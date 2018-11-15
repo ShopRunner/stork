@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 
 from apparate.update_databricks_library import (
@@ -123,16 +125,16 @@ def test_filename_match_not_equal():
 def test_filename_match_should_replace():
     match_1 = FileNameMatch('test-library-1.1.3.egg')
     match_2 = FileNameMatch('test-library-1.0.3.egg')
-    assert match_1.replace_version(match_2)
+    assert match_1.replace_version(match_2, mock.MagicMock())
 
 
 def test_filename_match_should_replace_snapshot():
     match_1 = FileNameMatch('test-library-1.1.3.egg')
     match_2 = FileNameMatch('test-library-1.0.3-SNAPSHOT.egg')
-    assert match_1.replace_version(match_2)
+    assert match_1.replace_version(match_2, mock.MagicMock())
 
 
 def test_filename_match_should_not_replace_snapshot():
     match_1 = FileNameMatch('test-library-1.1.3.egg')
     match_2 = FileNameMatch('test-library-0.0.3-SNAPSHOT.egg')
-    assert not match_1.replace_version(match_2)
+    assert not match_1.replace_version(match_2, mock.MagicMock())

@@ -122,15 +122,15 @@ class FileNameMatch(object):
             logger.debug(
                 'not replacable: {} != {} ({})'
                 .format(
-                    self.major_version,
+                    int(self.major_version),
                     int(other.major_version),
-                    int(other.filename),
+                    other.filename,
                 )
             )
             return False
-        elif float(other.minor_version) > float(self.minor_version):
+        elif float(other.minor_version) >= float(self.minor_version):
             logger.debug(
-                'not replacable: {} > {} ({})'
+                'not replacable: {} >= {} ({})'
                 .format(
                     other.minor_version,
                     self.minor_version,
@@ -533,7 +533,7 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup):
         job_list = get_job_list(logger, match, library_map, token, host)
         logger.info(
             'current major version of library used by jobs: {}'
-            .format(',\n'.join([i['job_name'] for i in job_list]))
+            .format(', '.join([i['job_name'] for i in job_list]))
         )
 
         if len(job_list) != 0:
@@ -547,7 +547,7 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup):
             )
             logger.info(
                 'updated jobs: {}'
-                .format(',\n'.join([i['job_name'] for i in job_list]))
+                .format(', '.join([i['job_name'] for i in job_list]))
             )
 
         if cleanup:
@@ -560,5 +560,5 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup):
                 host=host,
             )
             logger.info(
-                'removed old versions: {}'.format(',\n'.join(old_versions))
+                'removed old versions: {}'.format(', '.join(old_versions))
             )
