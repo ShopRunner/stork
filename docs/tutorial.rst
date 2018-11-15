@@ -10,13 +10,17 @@ When developing libraries, we often found it frustrating to frequently re-upload
 
 When you are ready to test out changes to your library, start by deleting the current version. (Unfortunately moving or renaming the old version is insufficient, and it must be fully deleted AND removed from the trash folder before the cluster will recognize the new copy). Next restart your cluster, so it wipes the old version from its imports. 
 
-Create a new egg file from your package. In the top level of your package, run::
+Create a new egg file from your python package using::
 
     python setup.py bdist_egg
 
-Upload the library to your preferred development folder::
+or create a new jar file from your scala package.
+
+Upload the library to your preferred development folder using::
 
     apparate upload -p ./dist/my_library-1.0.1-py3.6.egg -f /Users/my_email@fake_organization.com/dev_folder
+
+    apparate upload -p ./libs/my_library-1.0.1.jar -f /Users/my_email@fake_organization.com/dev_folder
 
 Finally, attach the new library to your cluster, and you're ready to test away!
 
