@@ -3,9 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project uses [Semantic Versioning](http://semver.org/).
 
-# [2.2.0] - 2018-10-16
+# [2.2.0] - 2018-11-15
 ### Added
-- Support for loading jars
+ - Support for loading jars
+ - DEBUG logging
+### Changed
+ - Moved print statements to INFO logging
+ - Updated dependency versions
 
 # [2.1.0] - 2018-10-11
 ### Added
