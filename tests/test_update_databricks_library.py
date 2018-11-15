@@ -1,7 +1,7 @@
 import logging
+from unittest import mock
 
 import json
-import mock
 import pytest
 import responses
 import requests
@@ -109,7 +109,6 @@ def test_get_job_list(library_mapping, job_list, job_list_response, host):
         json=job_list_response,
     )
     match = FileNameMatch('test-library-1.1.2.egg')
-    print('\nsearch match: ', vars(match))
     job_list_actual = get_job_list(
         logger,
         match=match,
@@ -192,6 +191,7 @@ def test_update_job_libraries(
             host + '/api/2.0/jobs/reset',
             callback=request_callback,
         )
+
     update_job_libraries(
         logger,
         job_list,
@@ -217,6 +217,7 @@ def test_delete_old_versions(id_nums, host, prod_folder):
             host + '/api/1.2/libraries/delete',
             callback=request_callback,
         )
+
     actual_deleted_libraries = delete_old_versions(
         logger,
         FileNameMatch('test-library-1.0.3-SNAPSHOT.egg'),
@@ -225,6 +226,7 @@ def test_delete_old_versions(id_nums, host, prod_folder):
         prod_folder=prod_folder,
         host=host,
     )
+
     assert len(responses.calls) == 2
     actual_responses = [res.response.text for res in responses.calls]
     assert set(actual_responses) == {'libraryId=6', 'libraryId=7'}
@@ -238,7 +240,7 @@ def test_delete_old_versions(id_nums, host, prod_folder):
 @responses.activate
 def test_update_databricks_already_exists(
         load_mock,
-        capsys,
+        caplog,
         prod_folder,
         host,
 ):
@@ -265,7 +267,7 @@ def test_update_databricks_already_exists(
         update_jobs=False,
         cleanup=False,
     )
-    out, _ = capsys.readouterr()
+    out = caplog.record_tuples[0][2]
     expected_out = (
         'this version (1.0.1) already exists:' +
         'if a change has been made please update your version number'
@@ -294,7 +296,7 @@ def test_update_databricks_update_jobs(
     library_mapping,
     id_nums,
     job_list,
-    capsys,
+    caplog,
     prod_folder,
     host,
 ):
@@ -312,18 +314,16 @@ def test_update_databricks_update_jobs(
         cleanup=True,
     )
 
-    out, _ = capsys.readouterr()
-    expected_out = """
-        new library test-library-1.0.3 loaded to Databricks
-        current major version of library used by jobs: job_3
-        updated jobs: job_3
-        removed old versions: test-library-1.0.1, test-library-1.0.2
-    """
+    out = [r[2] for r in caplog.record_tuples]
+    expected_out = [
+        'new library test-library-1.0.3 loaded to Databricks',
+        'current major version of library used by jobs: job_3',
+        'updated jobs: job_3',
+        'removed old versions: test-library-1.0.1, test-library-1.0.2',
+    ]
     match = FileNameMatch('test-library-1.0.3-py3.6.egg')
-    assert strip_whitespace(out) == strip_whitespace(expected_out)
-    load_mock.assert_called_with(
-        logger, path, match, prod_folder, '', host,
-    )
+    assert out == expected_out
+    load_mock.assert_called_with(path, match, prod_folder, '', host)
     job_mock.assert_called_with(logger, match, library_mapping, '', host)
     lib_mock.assert_called_with(logger, prod_folder, '', host)
     update_mock.assert_called_with(
@@ -356,7 +356,7 @@ def test_update_databricks_update_jobs_no_cleanup(
     library_mapping,
     id_nums,
     job_list,
-    capsys,
+    caplog,
     prod_folder,
     host,
 ):
@@ -371,13 +371,13 @@ def test_update_databricks_update_jobs_no_cleanup(
         update_jobs=True,
         cleanup=False,
     )
-    out, _ = capsys.readouterr()
-    expected_out = (
-        'new library test-library-1.0.3 loaded to Databricks\n'
-        'current major version of library used by jobs: job_3\n'
-        'updated jobs: job_3\n'
-    )
-    assert strip_whitespace(out) == strip_whitespace(expected_out)
+    out = [r[2] for r in caplog.record_tuples]
+    expected_out = [
+        'new library test-library-1.0.3 loaded to Databricks',
+        'current major version of library used by jobs: job_3',
+        'updated jobs: job_3',
+        ]
+    assert out == expected_out
 
     match = FileNameMatch('test-library-1.0.3-py3.6.egg')
     load_mock.assert_called_with(
@@ -396,7 +396,7 @@ def test_update_databricks_update_jobs_no_cleanup(
 
 
 @mock.patch('apparate.update_databricks_library.load_library')
-def test_update_databricks_only_upload(load_mock, capsys, prod_folder, host):
+def test_update_databricks_only_upload(load_mock, caplog, prod_folder, host):
     update_databricks(
         logger,
         path='some/path/to/test-library-1.0.3-py3.6.egg',
@@ -405,11 +405,10 @@ def test_update_databricks_only_upload(load_mock, capsys, prod_folder, host):
         update_jobs=False,
         cleanup=False,
     )
-    out, _ = capsys.readouterr()
+    out = caplog.record_tuples[0][2]
     expected_out = 'new library test-library-1.0.3 loaded to Databricks'
     assert strip_whitespace(out) == strip_whitespace(expected_out)
     load_mock.assert_called_with(
-        logger,
         'some/path/to/test-library-1.0.3-py3.6.egg',
         FileNameMatch('test-library-1.0.3-py3.6.egg'),
         prod_folder,
@@ -419,7 +418,7 @@ def test_update_databricks_only_upload(load_mock, capsys, prod_folder, host):
 
 
 @mock.patch('apparate.update_databricks_library.load_library')
-def test_update_databricks_wrong_folder(load_mock, capsys, host):
+def test_update_databricks_wrong_folder(load_mock, caplog, host):
     update_databricks(
         logger,
         path='some/path/to/test-library-1.0.3-py3.6.egg',
@@ -428,11 +427,10 @@ def test_update_databricks_wrong_folder(load_mock, capsys, host):
         update_jobs=True,
         cleanup=True,
     )
-    out, err = capsys.readouterr()
+    out = caplog.record_tuples[0][2]
     expected_out = 'new library test-library-1.0.3 loaded to Databricks'
     assert strip_whitespace(out) == strip_whitespace(expected_out)
     load_mock.assert_called_with(
-        logger,
         'some/path/to/test-library-1.0.3-py3.6.egg',
         FileNameMatch('test-library-1.0.3-py3.6.egg'),
         '/other/folder',
@@ -444,7 +442,7 @@ def test_update_databricks_wrong_folder(load_mock, capsys, host):
 @mock.patch('apparate.update_databricks_library.load_library')
 def test_update_databricks_with_jar_only_upload(
     load_mock,
-    capsys,
+    caplog,
     prod_folder,
     host,
 ):
@@ -456,11 +454,10 @@ def test_update_databricks_with_jar_only_upload(
         update_jobs=False,
         cleanup=False,
     )
-    out, _ = capsys.readouterr()
+    out = caplog.record_tuples[0][2]
     expected_out = 'new library test-library-1.0.3 loaded to Databricks'
     assert strip_whitespace(out) == strip_whitespace(expected_out)
     load_mock.assert_called_with(
-        logger,
         'some/path/to/test-library-1.0.3.jar',
         FileNameMatch('test-library-1.0.3.jar'),
         prod_folder,
@@ -472,7 +469,6 @@ def test_update_databricks_with_jar_only_upload(
 @mock.patch('apparate.update_databricks_library.load_library')
 def test_update_databricks_filename_not_match(
     load_mock,
-    capsys,
     prod_folder,
     host,
 ):

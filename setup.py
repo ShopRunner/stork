@@ -31,7 +31,6 @@ setup(
         'dev': [
             'flake8',
             'm2r',
-            'mock',
             'numpydoc',
             'pytest',
             'pytest-cov',

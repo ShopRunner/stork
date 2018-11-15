@@ -1,6 +1,6 @@
 from os.path import expanduser, join
+from unittest import mock
 
-import mock
 import pytest
 from click.testing import CliRunner
 from configparser import SafeConfigParser

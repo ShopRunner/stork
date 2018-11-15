@@ -1,5 +1,5 @@
 import click
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 from os.path import expanduser, join
 
 
@@ -15,7 +15,7 @@ def _load_config(filename):
     -------
     config class with values read from existing file
     """
-    config = SafeConfigParser()
+    config = ConfigParser()
     config.read(filename)
     return config
 
@@ -27,7 +27,7 @@ def _update_value(config, key, instruction, is_sensitive):
 
     Parameters
     ----------
-    config: SafeConfigParser object
+    config: ConfigParser object
         existing configuration
     key: string
         key to update
