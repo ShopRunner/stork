@@ -12,6 +12,21 @@ We write a lot of Python + PySpark packages in our data science work, and we oft
 
 As we set out to automate this using Databrick's library API, we realized that this task required using two versions of the API and many dependant API calls. Instead of trying to recreate that logic in each Jenkinsfile, we wrote apparate. Now you can enjoy the magic as well!
 
+Apparate now works for both `.egg` and `.jar` files to support Python + PySpark and Scala + Spark libaries.
+Take advantage of apparate's ability to update jobs, make sure you're following one of the following naming conventions:
+```
+new_library-1.0.0-py3.6.egg
+new_library-1.0.0-SNAPSHOT-py3.6.egg
+new_library-1.0.0-SNAPSHOT-my-branch-py3.6.egg
+new_library-1.0.0.egg
+new_library-1.0.0-SNAPSHOT.egg
+new_library-1.0.0-SNAPSHOT-my-branch.egg
+new_library-1.0.0.jar
+new_library-1.0.0-SNAPSHOT.jar
+new_library-1.0.0-SNAPSHOT-my-branch.jar
+```
+Where the first number in the version (in this case `1`) is a major version signaling breaking changes.
+
 ## What it does
 
 Apparate is a tool to manage libraries in Databricks in an automated fashion. It allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs.
@@ -54,8 +69,6 @@ The API tokens can be generated in Databricks under Account Settings -> Access T
 While libraries can be uploaded to folders other than your specified production library, no libraries outside of this folder will ever be deleted and no jobs using libraries outside of this folder will be updated.
 
 If you try to upload a library to Databricks that already exists there with the same version, a warning will be printed instructing the user to update the version if a change has been made. Without a version change the new library will not be uploaded.
-
-NOTE: This package relies on the naming conventions used by setuptools - it will not work as intended if you rename the generated egg file before trying to upload it, and it will not work as intended if you rename the libraries in Databricks after uploading. All libraries in databricks should be named according to the `<name>-<major_version>.<minor_version>.<patch_version>` format. For example, `apparate-1.0.0`.
 
 
 ## Contributing

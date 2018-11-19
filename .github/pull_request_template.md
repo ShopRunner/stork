@@ -5,4 +5,4 @@ Pull Request Checklist
  - [ ] `flake8 apparate tests` passes locally
  - [ ] CHANGELOG has been updated
  - [ ] Version in `_version.py` has been updated
- - [ ] README has been updated (if applicable)
+ - [ ] README and docs have been updated (if applicable)
