@@ -508,8 +508,13 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup):
     except APIError as err:
         if err.code == 'http 500' and 'already exists' in err.message:
             logger.info(
-                'this version ({}) already exists:'.format(match.version) +
-                'if a change has been made please update your version number'
+                'This version ({}) already exists: '.format(match.version) +
+                'if a change has been made please update your version number. '
+                'Note this error can also occur if you are uploading a jar '
+                'and an egg already exists with the same name and version, '
+                'or vice versa. In this case you will need to choose a '
+                'different library name or a different folder for either the '
+                'egg or the jar.'
             )
             return
         else:

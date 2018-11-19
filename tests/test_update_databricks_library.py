@@ -269,9 +269,15 @@ def test_update_databricks_already_exists(
     )
     out = caplog.record_tuples[0][2]
     expected_out = (
-        'this version (1.0.1) already exists:' +
-        'if a change has been made please update your version number'
+        'This version (1.0.1) already exists: '
+        'if a change has been made please update your version number. '
+        'Note this error can also occur if you are uploading a jar '
+        'and an egg already exists with the same name and version, '
+        'or vice versa. In this case you will need to choose a '
+        'different library name or a different folder for either the '
+        'egg or the jar.'
     )
+
     assert strip_whitespace(out) == strip_whitespace(expected_out)
     load_mock.assert_called_with(
         'some/path/to/test-library-1.0.1-py3.6.egg',
