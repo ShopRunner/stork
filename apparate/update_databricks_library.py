@@ -164,16 +164,17 @@ def load_library(filename, match, folder, token, host):
     ------------
     uploads egg to Databricks
     """
-    res = requests.post(
-        host + '/api/1.2/libraries/upload',
-        auth=('token', token),
-        data={
-            'libType': match.lib_type,
-            'name': '{0}-{1}'.format(match.library_name, match.version),
-            'folder': folder,
-        },
-        files={'uri': open(filename, 'rb')}
-    )
+    with open(filename, 'rb') as file_obj:
+        res = requests.post(
+            host + '/api/1.2/libraries/upload',
+            auth=('token', token),
+            data={
+                'libType': match.lib_type,
+                'name': '{0}-{1}'.format(match.library_name, match.version),
+                'folder': folder,
+            },
+            files={'uri': file_obj}
+        )
 
     if res.status_code != 200:
         raise APIError(res)
