@@ -1,12 +1,8 @@
-def compare_multiline_strings(actual, expected):
+def strip_whitespace(string_value):
     """
-    Helper function to compare multiline strings
-    that removes new line characters/empty strings
-    and turns the strings into lists.
-    Then the lists are asserted to be equal to one another
+    Return the input string without space, tab,
+    or newline characters (for comparing strings)
     """
-    actual = actual.split('\n')
-    actual = [item for item in actual if item != '']
-    expected = expected.split('\n')
-    expected = [item for item in expected if item != '']
-    assert actual == expected
+    return ''.join(
+        [c for c in string_value if c != ' ' and c != '\n' and c != '\t']
+    )

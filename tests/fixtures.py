@@ -1,7 +1,8 @@
 # flake8: noqa E501
 
 import pytest
-from configparser import SafeConfigParser
+from configparser import ConfigParser
+from apparate.update_databricks_library import FileNameMatch
 
 
 @pytest.fixture
@@ -13,45 +14,31 @@ def delete_library_response_list():
 def id_nums():
     id_nums = {
         'test-library-1.0.3': {
-            'name': 'test-library',
-            'major_version': '1',
-            'minor_version': '0.3',
+            'name_match': FileNameMatch('test-library-1.0.3.egg'),
             'id_num': '8',
         },
         'test-library-1.0.2': {
-            'name': 'test-library',
-            'major_version': '1',
-            'minor_version': '0.2',
+            'name_match': FileNameMatch('test-library-1.0.2.egg'),
             'id_num': '7',
         },
         'test-library-1.0.1': {
-            'name': 'test-library',
-            'major_version': '1',
-            'minor_version': '0.1',
+            'name_match': FileNameMatch('test-library-1.0.1.egg'),
             'id_num': '6',
         },
         'test-library-plus-stuff-0.0.0': {
-            'name': 'test-library-plus-stuff',
-            'major_version': '0',
-            'minor_version': '0.0',
+            'name_match': FileNameMatch('test-library-plus-stuff-0.0.0.egg'),
             'id_num': '4',
         },
         'test-library-0.0.0': {
-            'name': 'test-library',
-            'major_version': '0',
-            'minor_version': '0.0',
+            'name_match': FileNameMatch('test-library-0.0.0.egg'),
             'id_num': '3',
         },
         'awesome_library_a-0.10.1': {
-            'name': 'awesome_library_a',
-            'major_version': '0',
-            'minor_version': '10.1',
+            'name_match': FileNameMatch('awesome_library_a-0.10.1.egg'),
             'id_num': '2',
         },
         'awesome_library_b-4.2.3': {
-            'name': 'awesome_library_b',
-            'major_version': '4',
-            'minor_version': '2.3',
+            'name_match': FileNameMatch('awesome_library_b-4.2.3.egg'),
             'id_num': '1',
         },
     }
@@ -78,9 +65,7 @@ def job_list_response():
                 'job_id': 1,
                 'settings': {
                     'name': 'job_1',
-                    'new_cluster': {
-                        'cluster_attributes': 'attrs'
-                    },
+                    'new_cluster': {'cluster_attributes': 'attrs'},
                     'libraries': [
                         {'pypi': {'package': 'boto3'}},
                         {'maven': {'coordinates': 'maven_library'}},
@@ -95,15 +80,10 @@ def job_list_response():
                 'job_id': 2,
                 'settings': {
                     'name': 'job_2',
-                    'new_cluster': {
-                        'cluster_attributes': 'attrs'
-                    },
+                    'new_cluster': {'cluster_attributes': 'attrs'},
                     'libraries': [
                         {'egg': 'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_0_py3_6-e5f8c.egg'},
-                        {
-                            'egg':
-                            'dbfs:/FileStore/jars/01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg'
-                        },
+                        {'egg': 'dbfs:/FileStore/jars/01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg'},
                     ],
                 },
                 'creator_user_name': 'tests@shoprunner'
@@ -112,15 +92,10 @@ def job_list_response():
                 'job_id': 3,
                 'settings': {
                     'name': 'job_3',
-                    'new_cluster': {
-                        'cluster_attributes': 'attrs'
-                    },
+                    'new_cluster': {'cluster_attributes': 'attrs'},
                     'libraries': [
                         {'egg': 'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_1_py3_6-e5f8c.egg'},
-                        {
-                            'egg':
-                            'dbfs:/FileStore/jars/01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg'
-                        },
+                        {'egg': 'dbfs:/FileStore/jars/01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg'},
                     ],
                 },
                 'creator_user_name': 'tests@shoprunner'
@@ -129,12 +104,10 @@ def job_list_response():
                 'job_id': 4,
                 'settings': {
                     'name': 'job_4',
-                    'new_cluster': {
-                        'cluster_attributes': 'attrs'
-                    },
-                    'libraries': [{
-                        'egg': 'dbfs:/FileStore/jars/01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg'
-                    }],
+                    'new_cluster': {'cluster_attributes': 'attrs'},
+                    'libraries': [
+                        {'egg': 'dbfs:/FileStore/jars/01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg'}
+                    ],
                 },
                 'creator_user_name': 'tests@shoprunner'
             },
@@ -340,24 +313,20 @@ def library_list_response(prod_folder):
 @pytest.fixture
 def library_mapping():
     library_mapping = {
-        '47fb08a7-test-library_1_0_2_py3_6-e5f8c.egg': 'test-library-1.0.2',
-        '47fb08a7-test-library_1_0_1_py3_6-e5f8c.egg': 'test-library-1.0.1',
-        '01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg': (
-            'test-library-plus-stuff-0.0.0'
-        ),
-        '47fb08a7-test-library_0_0_0_py3_6-e5f8c.egg': 'test-library-0.0.0',
-        '996c949b-awesome_library_a_0_10_1_py3_6-266f.egg': (
-            'awesome_library_a-0.10.1'
-        ),
-        '47fb08a7-awesome_library_b_4_2_3_py3_6-e5f8c.egg': 'awesome_library_b-4.2.3',
-        '47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg': 'test-library-1.0.3',
+        '47fb08a7-test-library_1_0_2_py3_6-e5f8c.egg': FileNameMatch('test-library-1.0.2.egg'),
+        '47fb08a7-test-library_1_0_1_py3_6-e5f8c.egg': FileNameMatch('test-library-1.0.1.egg'),
+        '01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg': FileNameMatch('test-library-plus-stuff-0.0.0.egg'),
+        '47fb08a7-test-library_0_0_0_py3_6-e5f8c.egg': FileNameMatch('test-library-0.0.0.egg'),
+        '996c949b-awesome_library_a_0_10_1_py3_6-266f.egg': FileNameMatch('awesome_library_a-0.10.1.egg'),
+        '47fb08a7-awesome_library_b_4_2_3_py3_6-e5f8c.egg': FileNameMatch('awesome_library_b-4.2.3.egg'),
+        '47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg': FileNameMatch('test-library-1.0.3.egg'),
     }
     return library_mapping
 
 
 @pytest.fixture
 def existing_config():
-    existing_config = SafeConfigParser()
+    existing_config = ConfigParser()
     existing_config['DEFAULT'] = {
         'host': 'test_host',
         'token': 'test_token',
@@ -367,6 +336,6 @@ def existing_config():
 
 @pytest.fixture
 def empty_config():
-    empty_config = SafeConfigParser()
+    empty_config = ConfigParser()
     empty_config['DEFAULT'] = {}
     return empty_config

@@ -1,8 +1,14 @@
+import logging
+
 import click
+import click_log
 from configparser import NoOptionError
 
 from .configure import _load_config, CFG_FILE, PROFILE
 from .update_databricks_library import update_databricks
+
+logger = logging.getLogger(__name__)
+click_log.basic_config(logger)
 
 
 def _resolve_input(variable, variable_name, config_key, config):
@@ -36,12 +42,13 @@ def _resolve_input(variable, variable_name, config_key, config):
     return variable
 
 
-@click.command(short_help='upload an egg')
+@click.command(short_help='upload an egg or jar')
 @click.option(
     '-p',
     '--path',
-    help=('path to egg file with name as output from setuptools '
-          '(e.g. dist/new_library-1.0.0-py3.6.egg)'),
+    help=('path to egg or jar file with name as output from setuptools '
+          '(e.g. dist/new_library-1.0.0-py3.6.egg '
+          'or libs/new_library-1.0.0.jar)'),
     required=True
 )
 @click.option(
@@ -58,6 +65,7 @@ def _resolve_input(variable, variable_name, config_key, config):
           '(e.g. `/Users/my_email@fake_organization.com`) '
           '- optional, read from `.apparatecfg` if not provided'),
 )
+@click_log.simple_verbosity_option(logger)
 def upload(path, token, folder):
     """
     The egg that the provided path points to will be uploaded to Databricks.
@@ -66,7 +74,14 @@ def upload(path, token, folder):
     token = _resolve_input(token, 'token', 'token', config)
     folder = _resolve_input(folder, 'folder', 'prod_folder', config)
 
-    update_databricks(path, token, folder, update_jobs=False, cleanup=False)
+    update_databricks(
+        logger,
+        path,
+        token,
+        folder,
+        update_jobs=False,
+        cleanup=False
+    )
 
 
 @click.command(short_help='upload an egg and update jobs')
@@ -90,6 +105,7 @@ def upload(path, token, folder):
     default=True,
     show_default=True,
 )
+@click_log.simple_verbosity_option(logger)
 def upload_and_update(path, token, cleanup):
     """
     The egg that the provided path points to will be uploaded to Databricks.
@@ -110,4 +126,11 @@ def upload_and_update(path, token, cleanup):
     token = _resolve_input(token, 'token', 'token', config)
     folder = _resolve_input(None, 'folder', 'prod_folder', config)
 
-    update_databricks(path, token, folder, update_jobs=True, cleanup=cleanup)
+    update_databricks(
+        logger,
+        path,
+        token,
+        folder,
+        update_jobs=True,
+        cleanup=cleanup
+    )
