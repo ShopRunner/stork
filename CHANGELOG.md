@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project uses [Semantic Versioning](http://semver.org/).
 
+# [2.2.1] - 2019-02-14
+# Fixed
+ - added license file to setup.py so apparate can be installed from tarball
+ - added note to docs that apparate only works on AWS
+
 # [2.2.0] - 2018-11-15
 ### Added
  - Support for loading jars
