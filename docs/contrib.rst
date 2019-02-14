@@ -49,10 +49,14 @@ Steps for making a pull request:
 
 Note: several of the tests rely on the ``.apparatecfg`` file, so make sure to run ``apparate configure`` before running tests. If you want to run tests using a different token than is in your ``.apparatecfg`` file, you can also pass in the values directly, as shown in the second example. Values passed as options will override those in the config.
 
-To run unittests with using defaults in ``.apparatecfg``::
+To run unittests using defaults in ``.apparatecfg``::
 
    pytest 
 
+To run unittests using defaults in a ``.apparatecfg`` file somewhere other than the root directory::
+
+   pytest --cfg=/Users/my_user/other_folder/.apparatecfg
+   
 To run unittests with a different token::
 
    pytest --token abc123

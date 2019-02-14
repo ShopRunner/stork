@@ -239,10 +239,11 @@ def test_delete_old_versions(id_nums, host, prod_folder):
 @mock.patch('apparate.update_databricks_library.load_library')
 @responses.activate
 def test_update_databricks_already_exists(
-        load_mock,
-        caplog,
-        prod_folder,
-        host,
+    load_mock,
+    caplog,
+    prod_folder,
+    host,
+    cfg,
 ):
     responses.add(
         responses.GET,
@@ -259,14 +260,15 @@ def test_update_databricks_already_exists(
     )
     res = requests.get('https://test-api')
     load_mock.side_effect = APIError(res)
-    update_databricks(
-        logger,
-        path='some/path/to/test-library-1.0.1-py3.6.egg',
-        token='',
-        folder='/other/folder',
-        update_jobs=False,
-        cleanup=False,
-    )
+    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+        update_databricks(
+            logger,
+            path='some/path/to/test-library-1.0.1-py3.6.egg',
+            token='',
+            folder='/other/folder',
+            update_jobs=False,
+            cleanup=False,
+        )
     out = caplog.record_tuples[0][2]
     expected_out = (
         'This version (1.0.1) already exists: '
@@ -305,20 +307,22 @@ def test_update_databricks_update_jobs(
     caplog,
     prod_folder,
     host,
+    cfg,
 ):
     path = 'some/path/to/test-library-1.0.3-py3.6.egg'
     delete_mock.return_value = ['test-library-1.0.1', 'test-library-1.0.2']
     job_mock.return_value = job_list
     lib_mock.return_value = (library_mapping, id_nums)
 
-    update_databricks(
-        logger,
-        path=path,
-        token='',
-        folder=prod_folder,
-        update_jobs=True,
-        cleanup=True,
-    )
+    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+        update_databricks(
+            logger,
+            path=path,
+            token='',
+            folder=prod_folder,
+            update_jobs=True,
+            cleanup=True,
+        )
 
     out = [r[2] for r in caplog.record_tuples]
     expected_out = [
@@ -365,18 +369,20 @@ def test_update_databricks_update_jobs_no_cleanup(
     caplog,
     prod_folder,
     host,
+    cfg,
 ):
     path = 'some/path/to/test-library-1.0.3-py3.6.egg'
     job_mock.return_value = job_list
     lib_mock.return_value = (library_mapping, id_nums)
-    update_databricks(
-        logger,
-        path=path,
-        token='',
-        folder=prod_folder,
-        update_jobs=True,
-        cleanup=False,
-    )
+    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+        update_databricks(
+            logger,
+            path=path,
+            token='',
+            folder=prod_folder,
+            update_jobs=True,
+            cleanup=False,
+        )
     out = [r[2] for r in caplog.record_tuples]
     expected_out = [
         'new library test-library-1.0.3 loaded to Databricks',
@@ -402,15 +408,22 @@ def test_update_databricks_update_jobs_no_cleanup(
 
 
 @mock.patch('apparate.update_databricks_library.load_library')
-def test_update_databricks_only_upload(load_mock, caplog, prod_folder, host):
-    update_databricks(
-        logger,
-        path='some/path/to/test-library-1.0.3-py3.6.egg',
-        token='',
-        folder=prod_folder,
-        update_jobs=False,
-        cleanup=False,
-    )
+def test_update_databricks_only_upload(
+    load_mock,
+    caplog,
+    prod_folder,
+    host,
+    cfg,
+):
+    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+        update_databricks(
+            logger,
+            path='some/path/to/test-library-1.0.3-py3.6.egg',
+            token='',
+            folder=prod_folder,
+            update_jobs=False,
+            cleanup=False,
+        )
     out = caplog.record_tuples[0][2]
     expected_out = 'new library test-library-1.0.3 loaded to Databricks'
     assert strip_whitespace(out) == strip_whitespace(expected_out)
@@ -424,15 +437,16 @@ def test_update_databricks_only_upload(load_mock, caplog, prod_folder, host):
 
 
 @mock.patch('apparate.update_databricks_library.load_library')
-def test_update_databricks_wrong_folder(load_mock, caplog, host):
-    update_databricks(
-        logger,
-        path='some/path/to/test-library-1.0.3-py3.6.egg',
-        token='',
-        folder='/other/folder',
-        update_jobs=True,
-        cleanup=True,
-    )
+def test_update_databricks_wrong_folder(load_mock, caplog, host, cfg):
+    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+        update_databricks(
+            logger,
+            path='some/path/to/test-library-1.0.3-py3.6.egg',
+            token='',
+            folder='/other/folder',
+            update_jobs=True,
+            cleanup=True,
+        )
     out = caplog.record_tuples[0][2]
     expected_out = 'new library test-library-1.0.3 loaded to Databricks'
     assert strip_whitespace(out) == strip_whitespace(expected_out)
@@ -451,15 +465,17 @@ def test_update_databricks_with_jar_only_upload(
     caplog,
     prod_folder,
     host,
+    cfg,
 ):
-    update_databricks(
-        logger,
-        path='some/path/to/test-library-1.0.3.jar',
-        token='',
-        folder=prod_folder,
-        update_jobs=False,
-        cleanup=False,
-    )
+    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+        update_databricks(
+            logger,
+            path='some/path/to/test-library-1.0.3.jar',
+            token='',
+            folder=prod_folder,
+            update_jobs=False,
+            cleanup=False,
+        )
     out = caplog.record_tuples[0][2]
     expected_out = 'new library test-library-1.0.3 loaded to Databricks'
     assert strip_whitespace(out) == strip_whitespace(expected_out)
@@ -477,14 +493,16 @@ def test_update_databricks_filename_not_match(
     load_mock,
     prod_folder,
     host,
+    cfg,
 ):
-    with pytest.raises(FileNameError) as err:
-        update_databricks(
-            logger,
-            path='some/path/to/test-library-1.0.3.zip',
-            token='',
-            folder=prod_folder,
-            update_jobs=False,
-            cleanup=False,
-        )
-        assert err.filename == 'test-library-1.0.3.zip'
+    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+        with pytest.raises(FileNameError) as err:
+            update_databricks(
+                logger,
+                path='some/path/to/test-library-1.0.3.zip',
+                token='',
+                folder=prod_folder,
+                update_jobs=False,
+                cleanup=False,
+            )
+            assert err.filename == 'test-library-1.0.3.zip'
