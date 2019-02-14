@@ -10,7 +10,7 @@ We welcome contributions in the form of issues or pull requests!
 
 We want this to be a place where all are welcome to discuss and contribute, so please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms. Find the code of conduct :ref:`below <code>` or in the ``code_of_conduct.md`` file on GitHub.
 
-If you have a problem using apparate or see a possible impovement, open an issue in the GitHub issue tracker. Please be as specific as you can.
+If you have a problem using apparate or see a possible improvement, open an issue in the GitHub issue tracker. Please be as specific as you can.
 
 If you see an open issue you'd like to be fixed, take a stab at it and open a PR!
 
@@ -18,9 +18,10 @@ Steps for making a pull request:
 ################################
 
 1. Fork the project from GitHub
-2. Clone the forked repo to your local disk:: 
+2. Clone the forked repo to your local disk and ``cd`` into it:: 
 
     git clone https://github.com/<your_github_user_name>/apparate.git
+    cd apparate
 
 3. Create a new branch::
 
