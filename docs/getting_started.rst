@@ -14,6 +14,8 @@ We write a lot of Python + PySpark packages in our data science work, and we oft
 
 As we set out to automate this using Databrick's library API, we realized that this task required using two versions of the API and many dependant API calls. Instead of trying to recreate that logic in each Jenkinsfile, we wrote apparate. Now you can enjoy the magic as well!
 
+Note: Apparate only works on Databricks accoutns that run on AWS, not those that run on Azure. The V1 library API is required, and it only exists on AWS accounts.
+
 To get started, check out :ref:`install` or :ref:`start`.
 
 To learn more about how to use apparate, check out :ref:`tutorial` or :ref:`usage_details`.

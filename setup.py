@@ -1,4 +1,4 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 
 with open("apparate/_version.py") as version_file:
     exec(version_file.read())
@@ -19,7 +19,8 @@ setup(
     author_email='htorrence@shoprunner.com',
     url='https://github.com/shoprunner/apparate',
     license='BSD-3-Clause',
-    packages=find_packages(exclude=('tests', 'docs')),
+    packages=['apparate'],
+    data_files=[('', ['LICENSE.txt'])],
     install_requires=[
         'click',
         'click_log',

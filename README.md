@@ -35,7 +35,7 @@ For a more detailed API and tutorials, check out the [docs](https://apparate.rea
 
 ## Installation
 
-Note: apparate requires python3. 
+Note: apparate requires python3, and currently only works on Databricks accounts that run AWS (not Azure)
 
 Apparate is hosted on PyPi, so to get the latest version simply install via pip:
 ```
