@@ -208,6 +208,43 @@ def test_update_job_libraries(
     )
 
 
+@responses.activate
+def test_update_job_libraries_by_match_phrase(
+    job_list_multiple_jobs,
+    multiple_jobs_update_response_list_old,
+    multiple_jobs_update_response_list_new,
+    host
+):
+    for job in multiple_jobs_update_response_list_old:
+        responses.add(
+            responses.GET,
+            host + '/api/2.0/jobs/get?job_id={}'.format(job['job_id']),
+            status=200,
+            json=job,
+            )
+        responses.add_callback(
+            responses.POST,
+            host + '/api/2.0/jobs/reset',
+            callback=request_callback,
+            )
+
+    update_job_libraries(
+        logger,
+        job_list_multiple_jobs,
+        FileNameMatch('test_library-1.2.3.egg'),
+        'dbfs:/FileStore/jars/some_library_uri',
+        '',
+        host,
+        'prd'
+    )
+
+    assert len(responses.calls) == 2
+    assert (
+        json.loads(responses.calls[1].response.text) ==
+        multiple_jobs_update_response_list_new[1]
+    )
+
+
 @pytest.mark.usefixtures('id_nums')
 @responses.activate
 def test_delete_old_versions(id_nums, host, prod_folder):
@@ -343,6 +380,7 @@ def test_update_databricks_update_jobs(
         'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg',
         '',
         host,
+        '',
     )
     delete_mock.assert_called_with(
         logger,
@@ -404,6 +442,7 @@ def test_update_databricks_update_jobs_no_cleanup(
         'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg',
         '',
         host,
+        ''
     )
 
 

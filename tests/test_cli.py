@@ -287,6 +287,7 @@ def test_upload_and_update_cleanup(
         'test_folder',
         cleanup=True,
         update_jobs=True,
+        match_phrase=''
     )
     assert not result.exception
 
@@ -316,6 +317,7 @@ def test_upload_and_update_no_cleanup(
         'test_folder',
         cleanup=False,
         update_jobs=True,
+        match_phrase=''
     )
     assert not result.exception
 

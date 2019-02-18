@@ -58,6 +58,23 @@ def job_list():
 
 
 @pytest.fixture
+def job_list_multiple_jobs():
+    job_list = [
+        {
+            'job_id': 3,
+            'job_name': 'job_3_wip',
+            'library_path': 'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_1_py3_6-e5f8c.egg',
+        },
+        {
+            'job_id': 4,
+            'job_name': 'job_3_prd',
+            'library_path': 'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_1_py3_6-e5f8c.egg',
+        },
+    ]
+    return job_list
+
+
+@pytest.fixture
 def job_list_response():
     job_list_response = {
         'jobs': [
@@ -138,12 +155,82 @@ def job_update_response_list_new():
 
 
 @pytest.fixture
+def multiple_jobs_update_response_list_new():
+    job_update_response_list = [
+        {
+            'job_id': 3,
+            'new_settings': {
+                'name': 'job_3_wip',
+                'new_cluster': {
+                    'cluster_attributes': 'attrs'
+                },
+                'libraries': [
+                    {'egg': 'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg'},
+                    {'egg': 'dbfs:/FileStore/jars/01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg'}
+                ]
+            },
+            'creator_user_name': 'tests@shoprunner'
+        },
+        {
+            'job_id': 4,
+            'new_settings': {
+                'name': 'job_3_prd',
+                'new_cluster': {
+                    'cluster_attributes': 'attrs'
+                },
+                'libraries': [
+                    {'egg': 'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg'},
+                    {'egg': 'dbfs:/FileStore/jars/01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg'}
+                ]
+            },
+            'creator_user_name': 'tests@shoprunner'
+        },
+    ]
+    return job_update_response_list
+
+
+@pytest.fixture
 def job_update_response_list_old():
     job_update_response_list = [
         {
             'job_id': 3,
             'settings': {
                 'name': 'job_3',
+                'new_cluster': {
+                    'cluster_attributes': 'attrs'
+                },
+                'libraries': [
+                    {'egg': 'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg'},
+                    {'egg': 'dbfs:/FileStore/jars/01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg'}
+                ]
+            },
+            'creator_user_name': 'tests@shoprunner'
+        },
+    ]
+    return job_update_response_list
+
+
+@pytest.fixture
+def multiple_jobs_update_response_list_old():
+    job_update_response_list = [
+        {
+            'job_id': 3,
+            'settings': {
+                'name': 'job_3_wip',
+                'new_cluster': {
+                    'cluster_attributes': 'attrs'
+                },
+                'libraries': [
+                    {'egg': 'dbfs:/FileStore/jars/47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg'},
+                    {'egg': 'dbfs:/FileStore/jars/01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg'}
+                ]
+            },
+            'creator_user_name': 'tests@shoprunner'
+        },
+        {
+            'job_id': 4,
+            'settings': {
+                'name': 'job_3_prd',
                 'new_cluster': {
                     'cluster_attributes': 'attrs'
                 },

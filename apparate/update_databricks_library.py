@@ -345,6 +345,7 @@ def update_job_libraries(
     new_library_path,
     token,
     host,
+    match_phrase='',
 ):
     """
     update libraries on jobs using same major version
@@ -364,6 +365,8 @@ def update_job_libraries(
     host: string
         Databricks account url
         (e.g. https://fake-organization.cloud.databricks.com)
+    match_phrase: string
+        if provided, only jobs containing the match_phrase will be updated
 
     Side Effects
     ------------
@@ -371,35 +374,36 @@ def update_job_libraries(
     """
 
     for job in job_list:
-        get_res = requests.get(
-            host + '/api/2.0/jobs/get?job_id={}'.format(job['job_id']),
-            auth=('token', token),
-        )
-        if get_res.status_code == 200:
-            job_specs = get_res.json()  # copy current job specs
-            settings = job_specs['settings']
-            job_specs.pop('settings')
-            new_libraries = []
-            for lib in settings['libraries']:
-                if (
-                    match.suffix in lib.keys()
-                    and lib[match.suffix] == job['library_path']
-                ):
-                    # replace entry for old library path with new one
-                    new_libraries.append({match.suffix: new_library_path})
-                else:
-                    new_libraries.append(lib)
-            settings['libraries'] = new_libraries
-            job_specs['new_settings'] = settings
-            post_res = requests.post(
-                host + '/api/2.0/jobs/reset',
+        if match_phrase in job['job_name']:
+            get_res = requests.get(
+                host + '/api/2.0/jobs/get?job_id={}'.format(job['job_id']),
                 auth=('token', token),
-                data=json.dumps(job_specs)
             )
-            if post_res.status_code != 200:
-                raise APIError(post_res)
-        else:
-            raise APIError(get_res)
+            if get_res.status_code == 200:
+                job_specs = get_res.json()  # copy current job specs
+                settings = job_specs['settings']
+                job_specs.pop('settings')
+                new_libraries = []
+                for lib in settings['libraries']:
+                    if (
+                        match.suffix in lib.keys()
+                        and lib[match.suffix] == job['library_path']
+                    ):
+                        # replace entry for old library path with new one
+                        new_libraries.append({match.suffix: new_library_path})
+                    else:
+                        new_libraries.append(lib)
+                settings['libraries'] = new_libraries
+                job_specs['new_settings'] = settings
+                post_res = requests.post(
+                    host + '/api/2.0/jobs/reset',
+                    auth=('token', token),
+                    data=json.dumps(job_specs)
+                )
+                if post_res.status_code != 200:
+                    raise APIError(post_res)
+            else:
+                raise APIError(get_res)
 
 
 def delete_old_versions(
@@ -452,7 +456,15 @@ def delete_old_versions(
     return old_versions
 
 
-def update_databricks(logger, path, token, folder, update_jobs, cleanup):
+def update_databricks(
+    logger,
+    path,
+    token,
+    folder,
+    update_jobs,
+    cleanup,
+    match_phrase=''
+):
     """
     upload library, update jobs using the same major version,
     and delete libraries with the same major and lower minor versions
@@ -477,6 +489,8 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup):
     cleanup: bool
         if true, outdated libraries will be deleted
         if false, nothing will be deleted
+    match_phrase: string
+        if provided, only jobs containing the match_phrase will be updated
 
     Side Effects
     ------------
@@ -550,6 +564,7 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup):
                 library_path,
                 token,
                 host,
+                match_phrase,
             )
             logger.info(
                 'updated jobs: {}'

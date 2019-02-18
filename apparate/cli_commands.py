@@ -105,8 +105,14 @@ def upload(path, token, folder):
     default=True,
     show_default=True,
 )
+@click.option(
+    '--match',
+    help=('phrase to limit updates; if provided, only jobs containing'
+          'the phrase will be updated'),
+    default=''
+)
 @click_log.simple_verbosity_option(logger)
-def upload_and_update(path, token, cleanup):
+def upload_and_update(path, token, cleanup, match):
     """
     The egg that the provided path points to will be uploaded to Databricks.
      All jobs which use the same major version of the library will be updated
@@ -132,5 +138,6 @@ def upload_and_update(path, token, cleanup):
         token,
         folder,
         update_jobs=True,
-        cleanup=cleanup
+        cleanup=cleanup,
+        match_phrase=match
     )
