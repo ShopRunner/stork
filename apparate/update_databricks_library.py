@@ -451,8 +451,78 @@ def delete_old_versions(
                 raise APIError(res)
     return old_versions
 
+def get_cluster_list():
+    pass
 
-def update_databricks(logger, path, token, folder, update_jobs, cleanup):
+def get_cluster_mapping():
+    pass
+
+def update_cluster_libraries():
+    # uninstall_old_version_from_cluster
+    # delete_old_versions
+    # install_new_version_to_cluster
+    pass
+
+def uninstall_old_version_from_cluster():
+    pass
+
+def install_new_version_to_cluster():
+    pass
+
+
+def restart_cluster(logger, token, clusters):
+    """
+    :param logger:
+    :param token:
+    :param clusters:
+    :return:
+    """
+    config = _load_config(CFG_FILE)
+    try:
+        host = config.get(PROFILE, 'host')
+    except NoOptionError:
+        raise ValueError('no host provided: please run `apparate configure`'
+                         ' to get set up')
+
+    for cluster_id in clusters:
+        res = requests.post(
+            host + '/api/2.0/clusters/get',
+            auth=('token', token),
+            json={'cluster_id': cluster_id}
+        )
+
+        if res.status_code == 200:
+            state = res.json()['state']
+        else:
+            raise APIError(res)
+
+        if state == 'RUNNING':
+            res_restart = requests.post(
+                host + '/api/2.0/clusters/restart',
+                auth=('token', token),
+                json={'cluster_id': cluster_id}
+            )
+            logger.info('restarted the cluster {}.'.format(cluster_id))
+            if res_restart.status_code != 200:
+                raise APIError(res_restart)
+        elif state == 'TERMINATED':
+            res_start = requests.post(
+                host + '/api/2.0/clusters/start',
+                auth=('token', token),
+                json={'cluster_id': cluster_id}
+            )
+            logger.info('started the cluster {}.'.format(cluster_id))
+            if res_start.status_code != 200:
+                raise APIError(res_start)
+        else:
+            logger.info(
+                'The current cluster state is {}. The cluster state should be'
+                'either RUNNING or TERMINATED to be (re)started.'
+            )
+
+
+
+def update_databricks(logger, path, token, folder, update_jobs, cleanup, clusters=None):
     """
     upload library, update jobs using the same major version,
     and delete libraries with the same major and lower minor versions
@@ -498,6 +568,10 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup):
                          '`apparate configure` to get set up')
 
     match = FileNameMatch(basename(path))
+
+    # TODO:
+    # if it is a beta version, uninstall the existing old beta versions
+    # from jobs and clusters, and delete them from workspace.
 
     try:
         load_library(path, match, folder, token, host)
@@ -568,3 +642,10 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup):
             logger.info(
                 'removed old versions: {}'.format(', '.join(old_versions))
             )
+
+        if clusters == 'all':
+            print("get_cluster_list")
+            # TODO: get the cluster list that has the given library
+            # cluster_list = get_cluster_list()
+        if clusters is not None:
+            restart_cluster(logger, token, clusters)

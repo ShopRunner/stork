@@ -1,14 +1,14 @@
 import click
 
 from . import __version__
-from .cli_commands import upload, upload_and_update
+from .cli_commands import upload, upload_and_update, upload_and_update_cluster
 from .configure import configure
 
 
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo('Version {}'.format(__version__))
+    click.echo('This is a test. Version {}'.format(__version__))
     ctx.exit()
 
 
@@ -22,3 +22,4 @@ def cli(version):
 cli.add_command(configure)
 cli.add_command(upload)
 cli.add_command(upload_and_update)
+cli.add_command(upload_and_update_cluster)
