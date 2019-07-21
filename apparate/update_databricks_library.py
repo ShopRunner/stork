@@ -57,6 +57,7 @@ class FileNameMatch(object):
 
     Supported Patterns:
       new_library-1.0.0-py3.6.egg
+      new_library-1.0.0.dev-py3.6.egg
       new_library-1.0.0-SNAPSHOT-py3.6.egg
       new_library-1.0.0-SNAPSHOT-my-branch-py3.6.egg
 
@@ -75,7 +76,7 @@ class FileNameMatch(object):
 
     """
     file_pattern = (
-        r'([a-zA-Z0-9-\._]+)-((\d+)\.(\d+\.\d+)'
+        r'([a-zA-Z0-9-\._]+)-((\d+)\.(\d+\.\d)+.?(dev\d+)?'
         r'(?:-SNAPSHOT(?:[a-zA-Z_\-\.]+)?)?)(?:-py.+)?\.(egg|jar)'
     )
 
@@ -87,7 +88,12 @@ class FileNameMatch(object):
             self.version = match.group(2)
             self.major_version = match.group(3)
             self.minor_version = match.group(4)
-            self.suffix = match.group(5)
+            self.dev_version = match.group(5)
+            if self.dev_version is None:
+                self.is_dev = False
+            else:
+                self.is_dev = True
+            self.suffix = match.group(6)
             if self.suffix == 'jar':
                 self.lib_type = 'java-jar'
             elif self.suffix == 'egg':
