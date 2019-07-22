@@ -76,7 +76,7 @@ class FileNameMatch(object):
 
     """
     file_pattern = (
-        r'([a-zA-Z0-9-\._]+)-((\d+)\.(\d+\.\d)+.?(dev\d+)?'
+        r'([a-zA-Z0-9-\._]+)-((\d+)\.(\d+\.\d)+.?(dev(\d+))?'
         r'(?:-SNAPSHOT(?:[a-zA-Z_\-\.]+)?)?)(?:-py.+)?\.(egg|jar)'
     )
 
@@ -88,12 +88,15 @@ class FileNameMatch(object):
             self.version = match.group(2)
             self.major_version = match.group(3)
             self.minor_version = match.group(4)
-            self.dev_version = match.group(5)
-            if self.dev_version is None:
+            self.dev_tag = match.group(5)
+            if self.dev_tag is None:
                 self.is_dev = False
             else:
                 self.is_dev = True
-            self.suffix = match.group(6)
+            self.dev_version = match.group(6)
+            if self.dev_version is None:
+                self.dev_version = 0
+            self.suffix = match.group(7)
             if self.suffix == 'jar':
                 self.lib_type = 'java-jar'
             elif self.suffix == 'egg':
@@ -120,13 +123,13 @@ class FileNameMatch(object):
 
         if other.library_name != self.library_name:
             logger.debug(
-                'not replacable: {} != {} ()'
+                'not replaceable: {} != {} ()'
                 .format(other.library_name, self.library_name, other.filename)
             )
             return False
         elif int(other.major_version) != int(self.major_version):
             logger.debug(
-                'not replacable: {} != {} ({})'
+                'not replaceable: {} != {} ({})'
                 .format(
                     int(self.major_version),
                     int(other.major_version),
@@ -134,9 +137,9 @@ class FileNameMatch(object):
                 )
             )
             return False
-        elif float(other.minor_version) >= float(self.minor_version):
+        elif float(other.minor_version) > float(self.minor_version):
             logger.debug(
-                'not replacable: {} >= {} ({})'
+                'not replaceable: {} > {} ({})'
                 .format(
                     other.minor_version,
                     self.minor_version,
@@ -144,6 +147,22 @@ class FileNameMatch(object):
                 )
             )
             return False
+        elif float(other.minor_version) == float(self.minor_version):
+            if other.is_dev and self.is_dev:
+                if int(other.dev_version) >= int(self.dev_version):
+                    # do not replace 1.0.0.dev1 with 1.0.0.dev0 or 1.0.0.dev1
+                    return False
+                else:
+                    return True
+            elif other.is_dev and not self.is_dev:
+                # replace 1.0.0.dev1 with 1.0.0
+                return True
+            elif not other.is_dev and self.is_dev:
+                # do not replace 1.0.0 with 1.0.0.dev1
+                return False
+            else:  # both are not dev
+                # do not replace 1.0.0 with 1.0.0
+                return False
         else:
             return True
 
@@ -239,7 +258,7 @@ def get_job_list(logger, match, library_mapping, token, host):
                                 })
                             else:
                                 logger.debug(
-                                    'not replacable: {}'
+                                    'not replaceable: {}'
                                     .format(job_match.filename)
                                 )
                     else:
@@ -457,44 +476,158 @@ def delete_old_versions(
                 raise APIError(res)
     return old_versions
 
-def get_cluster_list():
-    pass
 
-def get_cluster_mapping():
-    pass
-
-def update_cluster_libraries():
-    # uninstall_old_version_from_cluster
-    # delete_old_versions
-    # install_new_version_to_cluster
-    pass
-
-def uninstall_old_version_from_cluster():
-    pass
-
-def install_new_version_to_cluster():
-    pass
-
-
-def restart_cluster(logger, token, clusters):
+def get_cluster_list(logger, match, library_mapping, token, host):
     """
-    :param logger:
-    :param token:
-    :param clusters:
-    :return:
-    """
-    config = _load_config(CFG_FILE)
-    try:
-        host = config.get(PROFILE, 'host')
-    except NoOptionError:
-        raise ValueError('no host provided: please run `apparate configure`'
-                         ' to get set up')
+    get a list of active (running) clusters using the major version of the given library.
+    Note that this finds libraries that are in the same path that the new library is uploaded to.
 
-    for cluster_id in clusters:
+    Parameters
+    ----------
+    logger: logging object
+        configured in cli_commands.py
+    match: FilenameMatch object
+        match object with suffix
+    library_mapping: dict
+        first element of get_library_mapping output
+    token: string
+        Databricks API key
+    host: string
+        Databricks host (e.g. https://my-organization.cloud.databricks.com)
+
+    Returns
+    -------
+    list of dictionaries containing the job id, job name, and library path
+     for each job
+    """
+
+    # all-cluster-statuses endpoint only returns running clusters
+    # TODO: get all the list of clusters including pending and terminated,
+    #  get the libraries by using /libraries/cluster-status?cluster_id={cluster_id}
+    res = requests.get(
+        host + '/api/2.0/libraries/all-cluster-statuses',
+        auth=('token', token),
+    )
+    if res.status_code == 200:
+        cluster_list = []
+        if len(res.json()['statuses']) == 0:
+            logger.debug('No cluster exists.')
+            return []
+        for cluster in res.json()['statuses']:
+            logger.debug('cluster: {}'.format(cluster['cluster_id']))
+            if len(cluster['library_statuses']) == 0:
+                logger.debug('no library in the cluster {}'.format(cluster['cluster_id']))
+                continue
+
+            for library in cluster['library_statuses']:
+                if match.suffix in library['library'].keys():
+                    try:  # if in prod_folder, mapping turns uri into name
+                        cluster_library_uri = basename(library['library'][match.suffix])
+                        library_match = library_mapping[cluster_library_uri]
+                    except KeyError:
+                        logger.debug(
+                            'not in library map: {}'
+                            .format(cluster_library_uri)
+                        )
+                        pass
+                    else:
+                        if match.replace_version(library_match, logger):
+                            cluster_list.append({
+                                'cluster_id': cluster['cluster_id'],
+                                'library_path': library['library'][match.suffix],
+                            })
+                        else:
+                            logger.debug(
+                                'not replaceable: {}'
+                                .format(library_match.filename)
+                            )
+                else:
+                    logger.debug(
+                        'no matching suffix: looking for {}, found {}'
+                        .format(match.suffix, str(library['library'].keys()))
+                    )
+        return cluster_list
+    else:
+        raise APIError(res)
+
+
+def update_cluster_libraries(logger, cluster_list, match, new_library_path, token, host):
+    """
+    uninstall the old versions of library given by cluster_list
+    and install new library given by new_library_path (uri).
+
+    Parameters
+    ----------
+    logger: logging object
+        configured in cli_commands.py
+    cluster_list: list of cluster dictionaries.
+        [{'cluster_id: {cluster_id}, library_path: {library_uri}}]
+    match: FilenameMatch object
+        match object with library_name_, major_version, minor_version
+    new_library_path: string
+        path to library in dbfs (including uri)
+    token: string
+        Databricks API key
+    host: string
+        Databricks host (e.g. https://my-organization.cloud.databricks.com)
+
+    Side Effects
+    ----------
+    note that libraries to uninstall is determined based on old versions of the library
+    that are in the same path our new library is installed.
+    (e.g. '/Users/my_email@fake_organization.com/')
+    If there is an old version of the library that is coming from in different directory
+    (e.g. /libraries/), it won't be uninstalled.
+    """
+
+    for cluster in cluster_list:
+        # uninstall old version
+        uninstall_res = requests.post(
+            host + '/api/2.0/libraries/uninstall',
+            auth=('token', token),
+            data=json.dumps({
+                    "cluster_id": cluster['cluster_id'],
+                    "libraries": [{match.suffix: cluster['library_path']}]
+                }
+            ))
+        if uninstall_res.status_code == 200:
+            logger.debug('uninstalled library {} from cluster {}'
+                         .format(cluster['cluster_id'], cluster['library_path']))
+        else:
+            raise APIError(uninstall_res)
+
+        # install the new version
+        install_res = requests.post(
+            host + '/api/2.0/libraries/install',
+            auth=('token', token),
+            data=json.dumps(
+                {
+                    'cluster_id': cluster['cluster_id'],
+                    'libraries': [{match.suffix: new_library_path}]
+                }
+            ))
+        if install_res.status_code == 200:
+            logger.debug('installed library {} from cluster {}'
+                         .format(cluster['cluster_id'], new_library_path))
+        else:
+            raise APIError(install_res)
+
+def restart_cluster(logger, cluster_list, token, host):
+    """
+    logger: logging object
+        configured in cli_commands.py
+    cluster_list: list of cluster dictionaries.
+        [{'cluster_id: {cluster_id}, library_path: {library_uri}}]
+    token: string
+        Databricks API key
+    host: string
+        Databricks host (e.g. https://my-organization.cloud.databricks.com)
+    """
+    for cluster in cluster_list:
         res = requests.post(
             host + '/api/2.0/clusters/get',
             auth=('token', token),
-            json={'cluster_id': cluster_id}
+            json={'cluster_id': cluster['cluster_id']}
         )
 
         if res.status_code == 200:
@@ -506,18 +639,18 @@ def restart_cluster(logger, token, clusters):
             res_restart = requests.post(
                 host + '/api/2.0/clusters/restart',
                 auth=('token', token),
-                json={'cluster_id': cluster_id}
+                json={'cluster_id': cluster['cluster_id']}
             )
-            logger.info('restarted the cluster {}.'.format(cluster_id))
+            logger.info('restarted the cluster {}.'.format(cluster['cluster_id']))
             if res_restart.status_code != 200:
                 raise APIError(res_restart)
         elif state == 'TERMINATED':
             res_start = requests.post(
                 host + '/api/2.0/clusters/start',
                 auth=('token', token),
-                json={'cluster_id': cluster_id}
+                json={'cluster_id': cluster['cluster_id']}
             )
-            logger.info('started the cluster {}.'.format(cluster_id))
+            logger.info('started the cluster {}.'.format(cluster['cluster_id']))
             if res_start.status_code != 200:
                 raise APIError(res_start)
         else:
@@ -528,7 +661,7 @@ def restart_cluster(logger, token, clusters):
 
 
 
-def update_databricks(logger, path, token, folder, update_jobs, cleanup, clusters=None):
+def update_databricks(logger, path, token, folder, update_jobs, cleanup, update_clusters):
     """
     upload library, update jobs using the same major version,
     and delete libraries with the same major and lower minor versions
@@ -553,11 +686,16 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup, cluster
     cleanup: bool
         if true, outdated libraries will be deleted
         if false, nothing will be deleted
+    update_clusters: bool
+        if true, clusters using this library (in the same folder)
+            will be updated to point to the new version
+        if false, will not touch clusters or other library versions at all
 
     Side Effects
     ------------
     new library in Databricks
     if update_jobs is true, then updated jobs
+    if update_clusters is true, then updated clusters
     if update_jobs and cleanup are true, removed outdated libraries
     """
 
@@ -574,10 +712,6 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup, cluster
                          '`apparate configure` to get set up')
 
     match = FileNameMatch(basename(path))
-
-    # TODO:
-    # if it is a beta version, uninstall the existing old beta versions
-    # from jobs and clusters, and delete them from workspace.
 
     try:
         load_library(path, match, folder, token, host)
@@ -600,41 +734,58 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup, cluster
         else:
             raise err
 
-    if update_jobs and folder == prod_folder:
+    if update_jobs or update_clusters:
+        logger.debug("getting the list of libraries")
         library_map, id_nums = get_library_mapping(
             logger,
-            prod_folder,
+            folder,
             token,
             host,
         )
+        # get the new library uri
         library_uri = [
             uri for uri, tmp_match in library_map.items()
             if (
                 match.library_name == tmp_match.library_name
                 and match.version == tmp_match.version
-            )
-        ][0]
+            )][0]
         library_path = 'dbfs:/FileStore/jars/' + library_uri
 
-        job_list = get_job_list(logger, match, library_map, token, host)
-        logger.info(
-            'current major version of library used by jobs: {}'
-            .format(', '.join([i['job_name'] for i in job_list]))
-        )
-
-        if len(job_list) != 0:
-            update_job_libraries(
-                logger,
-                job_list,
-                match,
-                library_path,
-                token,
-                host,
-            )
+        if update_jobs:
+            job_list = get_job_list(logger, match, library_map, token, host)
             logger.info(
-                'updated jobs: {}'
+                'current major version of library used by jobs: {}'
                 .format(', '.join([i['job_name'] for i in job_list]))
             )
+
+            if len(job_list) != 0:
+                update_job_libraries(
+                    logger,
+                    job_list,
+                    match,
+                    library_path,
+                    token,
+                    host,
+                )
+                logger.info(
+                    'updated jobs: {}'
+                    .format(', '.join([i['job_name'] for i in job_list]))
+                )
+
+        if update_clusters:
+            cluster_list = get_cluster_list(logger, match, library_map, token, host)
+            logger.info(
+                'current major version of library used by clusters: {}'
+                .format(', '.join([i['cluster_id'] for i in cluster_list]))
+            )
+
+            if len(cluster_list) != 0:
+                update_cluster_libraries(logger, cluster_list, match, library_path, token, host)
+                restart_cluster(logger, cluster_list, token, host)
+                logger.info(
+                    'updated clusters: {}'
+                    .format(', '.join([i['cluster_id'] for i in cluster_list]))
+                )
 
         if cleanup:
             old_versions = delete_old_versions(
@@ -642,16 +793,9 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup, cluster
                 match,
                 id_nums=id_nums,
                 token=token,
-                prod_folder=prod_folder,
+                prod_folder=folder,
                 host=host,
             )
             logger.info(
                 'removed old versions: {}'.format(', '.join(old_versions))
             )
-
-        if clusters == 'all':
-            print("get_cluster_list")
-            # TODO: get the cluster list that has the given library
-            # cluster_list = get_cluster_list()
-        if clusters is not None:
-            restart_cluster(logger, token, clusters)

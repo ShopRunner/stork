@@ -80,7 +80,8 @@ def upload(path, token, folder):
         token,
         folder,
         update_jobs=False,
-        cleanup=False
+        cleanup=False,
+        update_clusters=False,
     )
 
 
@@ -132,7 +133,8 @@ def upload_and_update(path, token, cleanup):
         token,
         folder,
         update_jobs=True,
-        cleanup=cleanup
+        cleanup=cleanup,
+        update_clusters=False,
     )
 
 
@@ -165,17 +167,8 @@ def upload_and_update(path, token, cleanup):
     default=True,
     show_default=True,
 )
-@click.option(
-    '-c',
-    '--clusters',
-    help='cluster id(s) to update',
-    required=True,
-    default='all',
-    show_default=True,
-    multiple=True
-)
 @click_log.simple_verbosity_option(logger)
-def upload_and_update_cluster(path, token, folder, cleanup, clusters):
+def upload_and_update_cluster(path, token, folder, cleanup):
     """
     The egg that the provided path points to will be uploaded to Databricks.
      All jobs which use the same major version of the library will be updated
@@ -191,12 +184,6 @@ def upload_and_update_cluster(path, token, folder, cleanup, clusters):
     """
     config = _load_config(CFG_FILE)
     token = _resolve_input(token, 'token', 'token', config)
-    print("path: ", path)
-    print("token: ", token)
-    print("folder: ", folder)
-    print("cleanup: ", cleanup)
-    print("update_clusters: ", True)
-    print("clusters: ", clusters)
 
     update_databricks(
         logger,
@@ -205,5 +192,5 @@ def upload_and_update_cluster(path, token, folder, cleanup, clusters):
         folder,
         update_jobs=False,
         cleanup=cleanup,
-        clusters=clusters
+        update_clusters=True,
     )
