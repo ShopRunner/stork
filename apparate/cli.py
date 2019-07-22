@@ -8,7 +8,7 @@ from .configure import configure
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo('This is a test. Version {}'.format(__version__))
+    click.echo('Version {}'.format(__version__))
     ctx.exit()
 
 
