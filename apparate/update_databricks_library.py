@@ -254,7 +254,7 @@ def get_job_list(logger, match, library_mapping, token, host):
                                 job_list.append({
                                     'job_id': job['job_id'],
                                     'job_name': job['settings']['name'],
-                                    'library_path': library[match.suffix],
+                                    'library_path': library[match.suffix]
                                 })
                             else:
                                 logger.debug(
@@ -310,7 +310,7 @@ def get_library_mapping(logger, prod_folder, token, host):
                 .get(
                     host + '/api/1.2/libraries/status?libraryId={}'
                     .format(library['id']),
-                    auth=('token', token),
+                    auth=('token', token)
                 )
             )
             if status_res.status_code == 200:
@@ -322,7 +322,7 @@ def get_library_mapping(logger, prod_folder, token, host):
                         .format(
                             library_info['name'],
                             library_info['folder'],
-                            prod_folder,
+                            prod_folder
                         )
                     )
                     continue
@@ -336,7 +336,7 @@ def get_library_mapping(logger, prod_folder, token, host):
                         'not jar or egg'
                         .format(
                             library_info['name'],
-                            library_info['libType'],
+                            library_info['libType']
                         )
                     )
                     continue
@@ -348,7 +348,7 @@ def get_library_mapping(logger, prod_folder, token, host):
                     # we'll need the id number to clean up old libraries
                     id_nums[library_info['name']] = {
                         'name_match': name_match,
-                        'id_num': library_info['id'],
+                        'id_num': library_info['id']
                     }
                 except FileNameError:
                     logger.debug(
@@ -369,7 +369,7 @@ def update_job_libraries(
     match,
     new_library_path,
     token,
-    host,
+    host
 ):
     """
     update libraries on jobs using same major version
@@ -398,7 +398,7 @@ def update_job_libraries(
     for job in job_list:
         get_res = requests.get(
             host + '/api/2.0/jobs/get?job_id={}'.format(job['job_id']),
-            auth=('token', token),
+            auth=('token', token)
         )
         if get_res.status_code == 200:
             job_specs = get_res.json()  # copy current job specs
@@ -470,7 +470,7 @@ def delete_old_versions(
             res = requests.post(
                 host + '/api/1.2/libraries/delete',
                 auth=('token', token),
-                data={'libraryId': lib['id_num']},
+                data={'libraryId': lib['id_num']}
             )
             if res.status_code != 200:
                 raise APIError(res)
@@ -506,7 +506,7 @@ def get_cluster_list(logger, match, library_mapping, token, host):
     #  get the libraries by using /libraries/cluster-status?cluster_id={cluster_id}
     res = requests.get(
         host + '/api/2.0/libraries/all-cluster-statuses',
-        auth=('token', token),
+        auth=('token', token)
     )
     if res.status_code == 200:
         cluster_list = []
@@ -740,7 +740,7 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup, update_
             logger,
             folder,
             token,
-            host,
+            host
         )
         # get the new library uri
         library_uri = [
@@ -765,7 +765,7 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup, update_
                     match,
                     library_path,
                     token,
-                    host,
+                    host
                 )
                 logger.info(
                     'updated jobs: {}'
@@ -794,7 +794,7 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup, update_
                 id_nums=id_nums,
                 token=token,
                 prod_folder=folder,
-                host=host,
+                host=host
             )
             logger.info(
                 'removed old versions: {}'.format(', '.join(old_versions))

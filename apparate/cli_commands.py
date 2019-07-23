@@ -55,7 +55,7 @@ def _resolve_input(variable, variable_name, config_key, config):
     '-t',
     '--token',
     help=('Databricks API key - '
-          'optional, read from `.apparatecfg` if not provided'),
+          'optional, read from `.apparatecfg` if not provided')
 )
 @click.option(
     '-f',
@@ -63,7 +63,7 @@ def _resolve_input(variable, variable_name, config_key, config):
     type=str,
     help=('Databricks folder to upload to '
           '(e.g. `/Users/my_email@fake_organization.com`) '
-          '- optional, read from `.apparatecfg` if not provided'),
+          '- optional, read from `.apparatecfg` if not provided')
 )
 @click_log.simple_verbosity_option(logger)
 def upload(path, token, folder):
@@ -81,7 +81,7 @@ def upload(path, token, folder):
         folder,
         update_jobs=False,
         cleanup=False,
-        update_clusters=False,
+        update_clusters=False
     )
 
 
@@ -91,7 +91,7 @@ def upload(path, token, folder):
     '--path',
     help=('path to egg file with name as output from setuptools '
           '(e.g. dist/new_library-1.0.0-py3.6.egg)'),
-    required=True,
+    required=True
 )
 @click.option(
     '-t',
@@ -104,7 +104,7 @@ def upload(path, token, folder):
     help=('if cleanup, remove outdated files from production folder; '
           'if no-cleanup, remove nothing'),
     default=True,
-    show_default=True,
+    show_default=True
 )
 @click_log.simple_verbosity_option(logger)
 def upload_and_update(path, token, cleanup):
@@ -134,7 +134,7 @@ def upload_and_update(path, token, cleanup):
         folder,
         update_jobs=True,
         cleanup=cleanup,
-        update_clusters=False,
+        update_clusters=False
     )
 
 
@@ -144,13 +144,13 @@ def upload_and_update(path, token, cleanup):
     '--path',
     help=('path to egg file with name as output from setuptools '
           '(e.g. dist/new_library-1.0.0-py3.6.egg)'),
-    required=True,
+    required=True
 )
 @click.option(
     '-t',
     '--token',
     help=('Databricks API key with admin permissions on all jobs using library'
-          ' - optional, read from `.apparatecfg` if not provided'),
+          ' - optional, read from `.apparatecfg` if not provided')
 )
 @click.option(
     '-f',
@@ -158,14 +158,14 @@ def upload_and_update(path, token, cleanup):
     type=str,
     help=('Databricks folder to upload to '
           '(e.g. `/Users/my_email@fake_organization.com`) '
-          '- optional, read from `.apparatecfg` if not provided'),
+          '- optional, read from `.apparatecfg` if not provided')
 )
 @click.option(
     '--cleanup/--no-cleanup',
     help=('if cleanup, remove outdated files from production folder; '
           'if no-cleanup, remove nothing'),
     default=True,
-    show_default=True,
+    show_default=True
 )
 @click_log.simple_verbosity_option(logger)
 def upload_and_update_cluster(path, token, folder, cleanup):
@@ -192,5 +192,5 @@ def upload_and_update_cluster(path, token, folder, cleanup):
         folder,
         update_jobs=False,
         cleanup=cleanup,
-        update_clusters=True,
+        update_clusters=True
     )
