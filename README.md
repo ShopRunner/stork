@@ -16,9 +16,11 @@ Apparate now works for both `.egg` and `.jar` files to support Python + PySpark 
 Take advantage of apparate's ability to update jobs, make sure you're following one of the following naming conventions:
 ```
 new_library-1.0.0-py3.6.egg
+new_library-1.0.0.dev1-py3.6.egg
 new_library-1.0.0-SNAPSHOT-py3.6.egg
 new_library-1.0.0-SNAPSHOT-my-branch-py3.6.egg
 new_library-1.0.0.egg
+new_library-1.0.0.dev1.egg
 new_library-1.0.0-SNAPSHOT.egg
 new_library-1.0.0-SNAPSHOT-my-branch.egg
 new_library-1.0.0.jar
@@ -48,6 +50,16 @@ git clone https://github.com/ShopRunner/apparate.git
 cd apparate
 easy_install .
 ```
+For Aquicore version use, install in the following way. (recommend to be under a directory where aq-data-science is.)
+```bash
+git clone https://github.com/aquicore/apparate.git
+# go to your repo where you will use apparate, activate virtual environment
+cd aq-data-science/aqds_py3
+source your_venv/bin/activate
+# install with the source code. (change the relative path if necessary) 
+pip install ../apparate
+
+```
 
 ## Setup
 
@@ -63,6 +75,23 @@ You will be asked for your Databricks host name (the url you use to access the a
 ### Databricks API token
 
 The API tokens can be generated in Databricks under Account Settings -> Access Tokens. To upload an egg to any folder in Databricks, you can use any token. To update jobs, you will need a token with admin permissions, which can be created in the same manner by an admin on the account.
+
+## Use
+```bash
+apparate -help
+apparate upload -p local/path/to/your/library -f remote/databricks/path
+apparate upload-and-update -p local/path/to/your/library -f remote/databricks/path --cleanup/--no-cleanup # if not given, default is --cleanup
+apparate upload-and-update-cluster -p local/path/to/your/library -f remote/databricks/path --cleanup/--no-cleanup
+```
+
+### Examples
+```bash
+apparate upload -p dist/new_library-1.0.0-py3.6.egg -f /Users/my_email@fake_organization.com
+apparate upload-and-update -p dist/new_library-1.0.0-py3.6.egg -f /Users/my_email@fake_organization.com --cleanup
+apparate upload-and-update -p dist/new_library-1.0.0-py3.6.egg -f /libraries --no-cleanup #/libraries is in libraries in Shared folder
+apparate upload-and-update-cluster -p dist/new_library-1.0.0-py3.6.egg -f /Users/my_email@fake_organization.com --cleanup
+apparate upload-and-update-cluster -p dist/new_library-1.0.0-py3.6.egg -f /libraries --no-cleanup
+```
 
 ## Usage notes
 
