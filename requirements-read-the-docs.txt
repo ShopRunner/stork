@@ -38,4 +38,4 @@ snowballstemmer==1.2.1
 Sphinx==1.8.2
 sphinxcontrib-programoutput==0.11
 sphinxcontrib-websupport==1.1.0
-urllib3==1.24.1
+urllib3==1.24.2
