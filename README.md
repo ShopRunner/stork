@@ -1,9 +1,6 @@
 # Apparate
 Make your libraries magically appear in Databricks.
 
-![apparate](https://pa1.narvii.com/6547/b8fd048a32aa591dbae528f4a80e67cb87112317_hq.gif)
-
-
 ## Why we built this
 
 When our team started setting up CI/CD for the various packages we maintain, we encountered some difficulties integrating Jenkins with Databricks.
