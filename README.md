@@ -1,6 +1,8 @@
 # Apparate
 Make your libraries magically appear in Databricks.
 
+> **Note 6/15/20:** Our team previously had a tradition of naming projects with terms or characters from the Harry Potter series, but we are disappointed by J.K. Rowling’s persistent transphobic comments. In response, we will be renaming this repository, and are working to develop an inclusive solution that minimizes disruption to our users.
+
 ## Why we built this
 
 When our team started setting up CI/CD for the various packages we maintain, we encountered some difficulties integrating Jenkins with Databricks.
