@@ -1,8 +1,7 @@
 # Apparate
 Make your libraries magically appear in Databricks.
 
-![apparate](https://pa1.narvii.com/6547/b8fd048a32aa591dbae528f4a80e67cb87112317_hq.gif)
-
+> **Note 6/15/20:** Our team previously had a tradition of naming projects with terms or characters from the Harry Potter series, but we are disappointed by J.K. Rowling’s persistent transphobic comments. In response, we will be renaming this repository, and are working to develop an inclusive solution that minimizes disruption to our users.
 
 ## Why we built this
 
