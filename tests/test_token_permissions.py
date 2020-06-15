@@ -1,8 +1,6 @@
-import pytest
 import requests
 
 
-@pytest.mark.unit
 def test_permission_basic(token, host):
     res1 = requests.get(
         host + '/api/2.0/libraries/all-cluster-statuses',
@@ -11,7 +9,6 @@ def test_permission_basic(token, host):
     assert res1.status_code == 200
 
 
-@pytest.mark.unit
 def test_permission_admin(token, host):
     res1 = requests.get(
         host + '/api/1.2/libraries/list',

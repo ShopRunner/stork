@@ -28,7 +28,7 @@ setup(
         'requests',
         'simplejson'
     ],
-    extra_requires={
+    extras_require={
         'dev': [
             'flake8',
             'm2r',

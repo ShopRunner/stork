@@ -115,7 +115,7 @@ class FileNameMatch(object):
         if other.library_name != self.library_name:
             logger.debug(
                 'not replacable: {} != {} ()'
-                .format(other.library_name, self.library_name, other.filename)
+                .format(other.library_name, self.library_name)
             )
             return False
         elif int(other.major_version) != int(self.major_version):
