@@ -14,8 +14,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 # [2.2.1] - 2019-02-14
 # Fixed
- - added license file to setup.py so apparate can be installed from tarball
- - added note to docs that apparate only works on AWS
+ - added license file to setup.py so stork can be installed from tarball
+ - added note to docs that stork only works on AWS
 
 # [2.2.0] - 2018-11-15
 ### Added
@@ -36,4 +36,4 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 # [2.0.0] - 2018-10-10
 ### Added
- - Initial open-source release of apparate!
+ - Initial open-source release of stork!

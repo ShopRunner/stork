@@ -1,4 +1,4 @@
-apparate
+stork
 alabaster==0.7.12
 atomicwrites==1.2.1
 attrs==18.2.0
@@ -14,7 +14,6 @@ flake8==3.6.0
 idna==2.7
 imagesize==1.1.0
 Jinja2==2.10
-m2r==0.2.1
 MarkupSafe==1.1.0
 mccabe==0.6.1
 mistune==0.8.4

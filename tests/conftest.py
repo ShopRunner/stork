@@ -1,6 +1,6 @@
 from .fixtures import *
 
-from apparate.configure import _load_config, CFG_FILE, PROFILE
+from stork.configure import _load_config, CFG_FILE, PROFILE
 
 
 def pytest_addoption(parser):

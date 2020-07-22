@@ -3,7 +3,7 @@ from configparser import ConfigParser
 from os.path import expanduser, join
 
 
-CFG_FILE = join(expanduser('~'), '.apparatecfg')
+CFG_FILE = join(expanduser('~'), '.storkcfg')
 PROFILE = 'DEFAULT'
 
 
@@ -73,7 +73,7 @@ def configure():
     """
     Configure information about Databricks account and default behavior.
 
-    Configuration is stored in a `.apparatecfg` file. A config file must exist
+    Configuration is stored in a `.storkcfg` file. A config file must exist
      before this package can be used, and can be supplied either directly as a
      text file or generated using this configuration tool.
     """

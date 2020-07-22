@@ -1,7 +1,6 @@
-# Apparate
+# Stork
 Make your libraries magically appear in Databricks.
 
-> **Note 6/15/20:** Our team previously had a tradition of naming projects with terms or characters from the Harry Potter series, but we are disappointed by J.K. Rowling’s persistent transphobic comments. In response, we will be renaming this repository, and are working to develop an inclusive solution that minimizes disruption to our users.
 
 ## Why we built this
 
@@ -9,10 +8,10 @@ When our team started setting up CI/CD for the various packages we maintain, we 
 
 We write a lot of Python + PySpark packages in our data science work, and we often deploy these as batch jobs run on a schedule using Databricks. However, each time we merged in a new change to one of these libraries we would have to manually create an egg, upload it using the Databricks GUI, go find all the jobs that used the library, and update each one to point to the new job. As our team and set of libraries and jobs grew, this became unsustainable (not to mention a big break from the CI/CD philosophy...).
 
-As we set out to automate this using Databrick's library API, we realized that this task required using two versions of the API and many dependant API calls. Instead of trying to recreate that logic in each Jenkinsfile, we wrote apparate. Now you can enjoy the magic as well!
+As we set out to automate this using Databrick's library API, we realized that this task required using two versions of the API and many dependant API calls. Instead of trying to recreate that logic in each Jenkinsfile, we wrote stork. Now you can enjoy the magic as well!
 
-Apparate now works for both `.egg` and `.jar` files to support Python + PySpark and Scala + Spark libaries.
-Take advantage of apparate's ability to update jobs, make sure you're following one of the following naming conventions:
+Stork now works for both `.egg` and `.jar` files to support Python + PySpark and Scala + Spark libaries.
+Take advantage of stork's ability to update jobs, make sure you're following one of the following naming conventions:
 ```
 new_library-1.0.0-py3.6.egg
 new_library-1.0.0-SNAPSHOT-py3.6.egg
@@ -28,23 +27,23 @@ Where the first number in the version (in this case `1`) is a major version sign
 
 ## What it does
 
-Apparate is a tool to manage libraries in Databricks in an automated fashion. It allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs.
+Stork is a tool to manage libraries in Databricks in an automated fashion. It allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs.
 
-For a more detailed API and tutorials, check out the [docs](https://apparate.readthedocs.io/en/latest/index.html).
+For a more detailed API and tutorials, check out the [docs](https://stork.readthedocs.io/en/latest/index.html).
 
 ## Installation
 
-Note: apparate requires python3, and currently only works on Databricks accounts that run AWS (not Azure)
+Note: stork requires python3, and currently only works on Databricks accounts that run AWS (not Azure)
 
-Apparate is hosted on PyPi, so to get the latest version simply install via pip:
+Stork is hosted on PyPi, so to get the latest version simply install via pip:
 ```
-pip install apparate
+pip install stork
 ```
 
-You can also install from source, by cloning the git repository https://github.com/ShopRunner/apparate.git and installing via easy_install:
+You can also install from source, by cloning the git repository https://github.com/ShopRunner/stork.git and installing via easy_install:
 ```
-git clone https://github.com/ShopRunner/apparate.git
-cd apparate
+git clone https://github.com/ShopRunner/stork.git
+cd stork
 easy_install .
 ```
 
@@ -52,12 +51,12 @@ easy_install .
 
 ### Configuration
 
-Apparate uses a `.apparatecfg` to store information about your Databricks account and setup. To create this file, run:
+Stork uses a `.storkcfg` to store information about your Databricks account and setup. To create this file, run:
 ```
-apparate configure
+stork configure
 ```
 
-You will be asked for your Databricks host name (the url you use to access the account - something like `https://my-organization.cloud.databricks.com`), an access token, and your production folder. This should be a folder your team creates to keep production-ready libraries. By isolating production-ready libraries in their own folder, you ensure that apparate will never update a job to use a library still in development/testing.
+You will be asked for your Databricks host name (the url you use to access the account - something like `https://my-organization.cloud.databricks.com`), an access token, and your production folder. This should be a folder your team creates to keep production-ready libraries. By isolating production-ready libraries in their own folder, you ensure that stork will never update a job to use a library still in development/testing.
 
 ### Databricks API token
 
@@ -71,6 +70,6 @@ If you try to upload a library to Databricks that already exists there with the 
 
 
 ## Contributing
-See a way for apparate to improve? We welcome contributions in the form of issues or pull requests!
+See a way for stork to improve? We welcome contributions in the form of issues or pull requests!
 
-Please check out the [contributing](https://apparate.readthedocs.io/en/latest/contrib.html) page for more information.
+Please check out the [contributing](https://stork.readthedocs.io/en/latest/contrib.html) page for more information.

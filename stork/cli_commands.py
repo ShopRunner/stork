@@ -29,7 +29,7 @@ def _resolve_input(variable, variable_name, config_key, config):
     config_key: string
         key in the config whose value could be used to fill in the variable
     config: ConfigParser
-        contains keys/values in .apparatecfg
+        contains keys/values in .storkcfg
     """
     if variable is None:
         try:
@@ -37,7 +37,7 @@ def _resolve_input(variable, variable_name, config_key, config):
         except NoOptionError:
             raise ValueError((
                 'no {} found - either provide a command line argument or '
-                'set up a default by running `apparate configure`'
+                'set up a default by running `stork configure`'
             ).format(variable_name))
     return variable
 
@@ -55,7 +55,7 @@ def _resolve_input(variable, variable_name, config_key, config):
     '-t',
     '--token',
     help=('Databricks API key - '
-          'optional, read from `.apparatecfg` if not provided'),
+          'optional, read from `.storkcfg` if not provided'),
 )
 @click.option(
     '-f',
@@ -63,7 +63,7 @@ def _resolve_input(variable, variable_name, config_key, config):
     type=str,
     help=('Databricks folder to upload to '
           '(e.g. `/Users/my_email@fake_organization.com`) '
-          '- optional, read from `.apparatecfg` if not provided'),
+          '- optional, read from `.storkcfg` if not provided'),
 )
 @click_log.simple_verbosity_option(logger)
 def upload(path, token, folder):
@@ -96,7 +96,7 @@ def upload(path, token, folder):
     '-t',
     '--token',
     help=('Databricks API key with admin permissions on all jobs using library'
-          ' - optional, read from `.apparatecfg` if not provided'),
+          ' - optional, read from `.storkcfg` if not provided'),
 )
 @click.option(
     '--cleanup/--no-cleanup',
