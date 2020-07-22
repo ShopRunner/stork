@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project uses [Semantic Versioning](http://semver.org/).
 
+
+# [3.0.0] - 2020-07-23
+# Changed
+ - renamed repo to stork
+
+========= prior development under the name apparate =========
+
 # [2.2.3] - 2020-06-15
 # Changed
  - add repo name note
@@ -14,8 +21,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 # [2.2.1] - 2019-02-14
 # Fixed
- - added license file to setup.py so stork can be installed from tarball
- - added note to docs that stork only works on AWS
+ - added license file to setup.py so apparate can be installed from tarball
+ - added note to docs that apparate only works on AWS
 
 # [2.2.0] - 2018-11-15
 ### Added
@@ -36,4 +43,4 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 # [2.0.0] - 2018-10-10
 ### Added
- - Initial open-source release of stork!
+ - Initial open-source release of apparate!
