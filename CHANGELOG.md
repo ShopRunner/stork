@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project uses [Semantic Versioning](http://semver.org/).
 
+# [2.3.0] - 2020-07-22
+# Added
+ - repo rename warning
+
 # [2.2.3] - 2020-06-15
 # Changed
  - add repo name note

@@ -3,12 +3,15 @@ import logging
 import click
 import click_log
 from configparser import NoOptionError
+import warnings
 
 from .configure import _load_config, CFG_FILE, PROFILE
 from .update_databricks_library import update_databricks
 
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
+
+RENAME_WARNING_MESSAGE='apparate has been renamed to carrier_pigeon. Please install and use the new package name from PyPI.' # noqa
 
 
 def _resolve_input(variable, variable_name, config_key, config):
@@ -70,6 +73,8 @@ def upload(path, token, folder):
     """
     The egg that the provided path points to will be uploaded to Databricks.
     """
+    warnings.warn(RENAME_WARNING_MESSAGE)
+
     config = _load_config(CFG_FILE)
     token = _resolve_input(token, 'token', 'token', config)
     folder = _resolve_input(folder, 'folder', 'prod_folder', config)
@@ -122,6 +127,8 @@ def upload_and_update(path, token, cleanup):
     All egg names already in Databricks must be properly formatted
      with versions of the form <name>-0.0.0.
     """
+    warnings.warn(RENAME_WARNING_MESSAGE)
+
     config = _load_config(CFG_FILE)
     token = _resolve_input(token, 'token', 'token', config)
     folder = _resolve_input(None, 'folder', 'prod_folder', config)
