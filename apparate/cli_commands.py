@@ -11,7 +11,7 @@ from .update_databricks_library import update_databricks
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
 
-RENAME_WARNING_MESSAGE='apparate has been renamed to carrier_pigeon. Please install and use the new package name from PyPI.' # noqa
+RENAME_WARNING_MESSAGE='apparate has been renamed to stork. Please install and use the new package name from PyPI.' # noqa
 
 
 def _resolve_input(variable, variable_name, config_key, config):
