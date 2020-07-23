@@ -2,7 +2,6 @@ import logging
 from os.path import expanduser, join
 from unittest import mock
 
-import pytest
 from click.testing import CliRunner
 from configparser import ConfigParser
 
@@ -165,7 +164,6 @@ def test_configure_no_http_in_host():
     assert result.output == expected_stdout
 
 
-@pytest.mark.fixture('existing_config')
 @mock.patch('apparate.cli_commands._load_config')
 @mock.patch('apparate.cli_commands.update_databricks')
 def test_upload(update_databricks_mock, config_mock, existing_config):
@@ -190,7 +188,6 @@ def test_upload(update_databricks_mock, config_mock, existing_config):
     assert not result.exception
 
 
-@pytest.mark.fixture('existing_config')
 @mock.patch('apparate.cli_commands._load_config')
 @mock.patch('apparate.cli_commands.update_databricks')
 def test_upload_all_options(
@@ -226,7 +223,6 @@ def test_upload_all_options(
     assert not result.exception
 
 
-@pytest.mark.fixture('empty_config')
 @mock.patch('apparate.cli_commands._load_config')
 def test_upload_missing_token(config_mock, empty_config):
 
@@ -244,7 +240,6 @@ def test_upload_missing_token(config_mock, empty_config):
     )
 
 
-@pytest.mark.fixture('empty_config')
 @mock.patch('apparate.cli_commands._load_config')
 def test_upload_missing_folder(config_mock, empty_config):
 
@@ -262,7 +257,6 @@ def test_upload_missing_folder(config_mock, empty_config):
     )
 
 
-@pytest.mark.fixture('existing_config')
 @mock.patch('apparate.cli_commands._load_config')
 @mock.patch('apparate.cli_commands.update_databricks')
 def test_upload_and_update_cleanup(
@@ -291,7 +285,6 @@ def test_upload_and_update_cleanup(
     assert not result.exception
 
 
-@pytest.mark.fixture('existing_config')
 @mock.patch('apparate.cli_commands._load_config')
 @mock.patch('apparate.cli_commands.update_databricks')
 def test_upload_and_update_no_cleanup(
@@ -340,7 +333,6 @@ def test_upload_and_update_missing_token(config_mock):
     )
 
 
-@pytest.mark.fixture('empty_config')
 @mock.patch('apparate.cli_commands._load_config')
 def test_upload_and_update_missing_folder(config_mock, empty_config):
 
