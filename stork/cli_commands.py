@@ -3,7 +3,6 @@ import logging
 import click
 import click_log
 from configparser import NoOptionError
-import warnings
 
 from .configure import _load_config, CFG_FILE, PROFILE
 from .update_databricks_library import update_databricks

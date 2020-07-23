@@ -49,7 +49,7 @@ sphinxcontrib-jsmath==1.0.1  # via sphinx
 sphinxcontrib-programoutput==0.16  # via stork
 sphinxcontrib-qthelp==1.0.3  # via sphinx
 sphinxcontrib-serializinghtml==1.1.4  # via sphinx
-urllib3==1.24.1           # via requests
+urllib3==1.24.2           # via requests
 wcwidth==0.2.4            # via pytest
 zipp==3.1.0               # via importlib-metadata
 

@@ -12,4 +12,4 @@ configparser==3.5.0       # via stork (setup.py)
 idna==2.7                 # via requests
 requests==2.20.1          # via stork (setup.py)
 simplejson==3.16.0        # via stork (setup.py)
-urllib3==1.24.1           # via requests
+urllib3==1.24.2           # via requests
