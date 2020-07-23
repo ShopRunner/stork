@@ -4,19 +4,16 @@
 name: Python package
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -30,7 +27,6 @@ jobs:
         printf "[DEFAULT]\nhost = https://fake-org.cloud.databricks.com\nprod_folder = /databricks/folder\n" > ~/.apparatecfg
     - name: Lint with flake8
       run: |
-        # stop the build if there are Python syntax errors or undefined names
         flake8 apparate tests
     - name: Test with pytest
       run: |
