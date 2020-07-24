@@ -48,6 +48,7 @@ release = __version__
 # ones.
 extensions = [
     'numpydoc',
+    'sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinxcontrib.programoutput',
