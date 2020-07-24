@@ -16,7 +16,7 @@ setup(
     long_description=readme+'\n\n\nLicense\n-------\n'+license,
     long_description_content_type='text/markdown',
     author='Hanna Torrence',
-    author_email='htorrence@shoprunner.com',
+    author_email='data-science@shoprunner.com',
     url='https://github.com/shoprunner/stork',
     license='BSD-3-Clause',
     packages=['stork'],
