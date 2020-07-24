@@ -1,7 +1,7 @@
 # Makefile for Sphinx documentation
 #
 #
-# To build all docs, make sure you have apparate installed and run `make docs`
+# To build all docs, make sure you have stork installed and run `make docs`
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
@@ -37,10 +37,10 @@ help:
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
 clean:
-	-rm -rf $(BUILDDIR)/*
+	-rm -rf $(BUILDDIR)/* source/
 
 autodoc: 
-	sphinx-apidoc -f -o source/ ../apparate/
+	sphinx-apidoc -f -o source/ ../stork/
 
 
 html:
@@ -130,4 +130,4 @@ linkcheck:
 	@echo
 	@echo "Link check complete; look for any errors"
 
-docs: autodoc html
+docs: html

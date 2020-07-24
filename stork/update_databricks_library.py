@@ -68,6 +68,8 @@ class FileNameMatch(object):
       new_library-1.0.0-SNAPSHOT.jar
       new_library-1.0.0-SNAPSHOT-my-branch.jar
 
+    Parameters
+    ----------
     library_name: string
         base name of library (e.g. 'test_library')
     version: string
@@ -420,7 +422,7 @@ def delete_old_versions(
     ----------
     logger: logging object
         configured in cli_commands.py
-    match: FilenameMatch object
+    new_library_match: FilenameMatch object
         match object with library_name_, major_version, minor_version
     id_nums: dict
         second output of get_library_mapping
@@ -489,13 +491,13 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup):
     try:
         host = config.get(PROFILE, 'host')
     except NoOptionError:
-        raise ValueError('no host provided: please run `apparate configure`'
+        raise ValueError('no host provided: please run `stork configure`'
                          ' to get set up')
     try:
         prod_folder = config.get(PROFILE, 'prod_folder')
     except NoOptionError:
         raise ValueError('no prod_folder provided: please run '
-                         '`apparate configure` to get set up')
+                         '`stork configure` to get set up')
 
     match = FileNameMatch(basename(path))
 

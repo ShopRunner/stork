@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from apparate.update_databricks_library import (
+from stork.update_databricks_library import (
     FileNameError,
     FileNameMatch,
 )

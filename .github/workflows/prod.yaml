@@ -24,11 +24,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt -r requirements-dev.txt
-        printf "[DEFAULT]\nhost = https://fake-org.cloud.databricks.com\nprod_folder = /databricks/folder\n" > ~/.apparatecfg
+        printf "[DEFAULT]\nhost = https://fake-org.cloud.databricks.com\nprod_folder = /databricks/folder\n" > ~/.storkcfg
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        flake8 apparate tests
+        flake8 stork tests
     - name: Test with pytest
       run: |
         pytest -v --deselect tests/test_token_permissions.py

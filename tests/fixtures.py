@@ -2,7 +2,7 @@
 
 import pytest
 from configparser import ConfigParser
-from apparate.update_databricks_library import FileNameMatch
+from stork.update_databricks_library import FileNameMatch
 
 
 @pytest.fixture

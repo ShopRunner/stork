@@ -5,12 +5,12 @@ from unittest import mock
 from click.testing import CliRunner
 from configparser import ConfigParser
 
-from apparate.configure import configure
-from apparate.cli_commands import upload, upload_and_update
+from stork.configure import configure
+from stork.cli_commands import upload, upload_and_update
 
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger('apparate.cli_commands')
+logger = logging.getLogger('stork.cli_commands')
 
 
 def test_configure_no_existing_config():
@@ -22,7 +22,7 @@ def test_configure_no_existing_config():
         'Databricks folder for production libraries: test_folder\n'
     )
 
-    filename = join(expanduser('~'), '.apparatecfg')
+    filename = join(expanduser('~'), '.storkcfg')
     expected_call_list = [
         mock.call(filename, encoding=None),
         mock.call(filename, 'w+'),
@@ -59,7 +59,7 @@ def test_configure_extra_slash_in_host():
         'Databricks folder for production libraries: test_folder\n'
     )
 
-    filename = join(expanduser('~'), '.apparatecfg')
+    filename = join(expanduser('~'), '.storkcfg')
     expected_call_list = [
         mock.call(filename, encoding=None),
         mock.call(filename, 'w+'),
@@ -96,7 +96,7 @@ def test_configure_extra_slash_in_folder():
         'Databricks folder for production libraries: test_folder/\n'
     )
 
-    filename = join(expanduser('~'), '.apparatecfg')
+    filename = join(expanduser('~'), '.storkcfg')
     expected_call_list = [
         mock.call(filename, encoding=None),
         mock.call(filename, 'w+'),
@@ -135,7 +135,7 @@ def test_configure_no_http_in_host():
         'Databricks folder for production libraries: test_folder\n'
     )
 
-    filename = join(expanduser('~'), '.apparatecfg')
+    filename = join(expanduser('~'), '.storkcfg')
     expected_call_list = [
         mock.call(filename, encoding=None),
         mock.call(filename, 'w+'),
@@ -164,8 +164,8 @@ def test_configure_no_http_in_host():
     assert result.output == expected_stdout
 
 
-@mock.patch('apparate.cli_commands._load_config')
-@mock.patch('apparate.cli_commands.update_databricks')
+@mock.patch('stork.cli_commands._load_config')
+@mock.patch('stork.cli_commands.update_databricks')
 def test_upload(update_databricks_mock, config_mock, existing_config):
 
     config_mock.return_value = existing_config
@@ -188,8 +188,8 @@ def test_upload(update_databricks_mock, config_mock, existing_config):
     assert not result.exception
 
 
-@mock.patch('apparate.cli_commands._load_config')
-@mock.patch('apparate.cli_commands.update_databricks')
+@mock.patch('stork.cli_commands._load_config')
+@mock.patch('stork.cli_commands.update_databricks')
 def test_upload_all_options(
     update_databricks_mock,
     config_mock,
@@ -223,7 +223,7 @@ def test_upload_all_options(
     assert not result.exception
 
 
-@mock.patch('apparate.cli_commands._load_config')
+@mock.patch('stork.cli_commands._load_config')
 def test_upload_missing_token(config_mock, empty_config):
 
     config_mock.return_value = empty_config
@@ -236,11 +236,11 @@ def test_upload_missing_token(config_mock, empty_config):
 
     assert str(result.exception) == (
         'no token found - either provide a command line argument or set up'
-        ' a default by running `apparate configure`'
+        ' a default by running `stork configure`'
     )
 
 
-@mock.patch('apparate.cli_commands._load_config')
+@mock.patch('stork.cli_commands._load_config')
 def test_upload_missing_folder(config_mock, empty_config):
 
     config_mock.return_value = empty_config
@@ -253,12 +253,12 @@ def test_upload_missing_folder(config_mock, empty_config):
 
     assert str(result.exception) == (
         'no folder found - either provide a command line argument or set up'
-        ' a default by running `apparate configure`'
+        ' a default by running `stork configure`'
     )
 
 
-@mock.patch('apparate.cli_commands._load_config')
-@mock.patch('apparate.cli_commands.update_databricks')
+@mock.patch('stork.cli_commands._load_config')
+@mock.patch('stork.cli_commands.update_databricks')
 def test_upload_and_update_cleanup(
     update_databricks_mock,
     config_mock,
@@ -285,8 +285,8 @@ def test_upload_and_update_cleanup(
     assert not result.exception
 
 
-@mock.patch('apparate.cli_commands._load_config')
-@mock.patch('apparate.cli_commands.update_databricks')
+@mock.patch('stork.cli_commands._load_config')
+@mock.patch('stork.cli_commands.update_databricks')
 def test_upload_and_update_no_cleanup(
     update_databricks_mock,
     config_mock,
@@ -313,7 +313,7 @@ def test_upload_and_update_no_cleanup(
     assert not result.exception
 
 
-@mock.patch('apparate.cli_commands._load_config')
+@mock.patch('stork.cli_commands._load_config')
 def test_upload_and_update_missing_token(config_mock):
 
     existing_config = ConfigParser()
@@ -329,11 +329,11 @@ def test_upload_and_update_missing_token(config_mock):
     config_mock.assert_called_once()
     assert str(result.exception) == (
         'no token found - either provide a command line argument or set up'
-        ' a default by running `apparate configure`'
+        ' a default by running `stork configure`'
     )
 
 
-@mock.patch('apparate.cli_commands._load_config')
+@mock.patch('stork.cli_commands._load_config')
 def test_upload_and_update_missing_folder(config_mock, empty_config):
 
     config_mock.return_value = empty_config
@@ -347,5 +347,5 @@ def test_upload_and_update_missing_folder(config_mock, empty_config):
     config_mock.assert_called_once()
     assert str(result.exception) == (
         'no folder found - either provide a command line argument or set up'
-        ' a default by running `apparate configure`'
+        ' a default by running `stork configure`'
     )

@@ -3,15 +3,12 @@ import logging
 import click
 import click_log
 from configparser import NoOptionError
-import warnings
 
 from .configure import _load_config, CFG_FILE, PROFILE
 from .update_databricks_library import update_databricks
 
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
-
-RENAME_WARNING_MESSAGE='apparate has been renamed to stork. Please install and use the new package name from PyPI.' # noqa
 
 
 def _resolve_input(variable, variable_name, config_key, config):
@@ -32,7 +29,7 @@ def _resolve_input(variable, variable_name, config_key, config):
     config_key: string
         key in the config whose value could be used to fill in the variable
     config: ConfigParser
-        contains keys/values in .apparatecfg
+        contains keys/values in .storkcfg
     """
     if variable is None:
         try:
@@ -40,7 +37,7 @@ def _resolve_input(variable, variable_name, config_key, config):
         except NoOptionError:
             raise ValueError((
                 'no {} found - either provide a command line argument or '
-                'set up a default by running `apparate configure`'
+                'set up a default by running `stork configure`'
             ).format(variable_name))
     return variable
 
@@ -58,7 +55,7 @@ def _resolve_input(variable, variable_name, config_key, config):
     '-t',
     '--token',
     help=('Databricks API key - '
-          'optional, read from `.apparatecfg` if not provided'),
+          'optional, read from `.storkcfg` if not provided'),
 )
 @click.option(
     '-f',
@@ -66,15 +63,13 @@ def _resolve_input(variable, variable_name, config_key, config):
     type=str,
     help=('Databricks folder to upload to '
           '(e.g. `/Users/my_email@fake_organization.com`) '
-          '- optional, read from `.apparatecfg` if not provided'),
+          '- optional, read from `.storkcfg` if not provided'),
 )
 @click_log.simple_verbosity_option(logger)
 def upload(path, token, folder):
     """
     The egg that the provided path points to will be uploaded to Databricks.
     """
-    warnings.warn(RENAME_WARNING_MESSAGE)
-
     config = _load_config(CFG_FILE)
     token = _resolve_input(token, 'token', 'token', config)
     folder = _resolve_input(folder, 'folder', 'prod_folder', config)
@@ -101,7 +96,7 @@ def upload(path, token, folder):
     '-t',
     '--token',
     help=('Databricks API key with admin permissions on all jobs using library'
-          ' - optional, read from `.apparatecfg` if not provided'),
+          ' - optional, read from `.storkcfg` if not provided'),
 )
 @click.option(
     '--cleanup/--no-cleanup',
@@ -127,8 +122,6 @@ def upload_and_update(path, token, cleanup):
     All egg names already in Databricks must be properly formatted
      with versions of the form <name>-0.0.0.
     """
-    warnings.warn(RENAME_WARNING_MESSAGE)
-
     config = _load_config(CFG_FILE)
     token = _resolve_input(token, 'token', 'token', config)
     folder = _resolve_input(None, 'folder', 'prod_folder', config)

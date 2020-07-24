@@ -6,10 +6,10 @@
 #
 certifi==2018.10.15       # via requests
 chardet==3.0.4            # via requests
-click-log==0.3.2          # via apparate (setup.py)
-click==7.0                # via apparate (setup.py), click-log
-configparser==3.5.0       # via apparate (setup.py)
+click-log==0.3.2          # via stork (setup.py)
+click==7.0                # via stork (setup.py), click-log
+configparser==3.5.0       # via stork (setup.py)
 idna==2.7                 # via requests
-requests==2.20.1          # via apparate (setup.py)
-simplejson==3.16.0        # via apparate (setup.py)
-urllib3==1.24.1           # via requests
+requests==2.20.1          # via stork (setup.py)
+simplejson==3.16.0        # via stork (setup.py)
+urllib3==1.24.2           # via requests

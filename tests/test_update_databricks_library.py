@@ -7,7 +7,7 @@ import responses
 import requests
 
 from .unittest_helpers import strip_whitespace
-from apparate.update_databricks_library import (
+from stork.update_databricks_library import (
     APIError,
     FileNameError,
     FileNameMatch,
@@ -236,7 +236,7 @@ def test_delete_old_versions(id_nums, host, prod_folder):
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_library')
+@mock.patch('stork.update_databricks_library.load_library')
 @responses.activate
 def test_update_databricks_already_exists(
     load_mock,
@@ -260,7 +260,7 @@ def test_update_databricks_already_exists(
     )
     res = requests.get('https://test-api')
     load_mock.side_effect = APIError(res)
-    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+    with mock.patch('stork.update_databricks_library.CFG_FILE', cfg):
         update_databricks(
             logger,
             path='some/path/to/test-library-1.0.1-py3.6.egg',
@@ -290,11 +290,11 @@ def test_update_databricks_already_exists(
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_library')
-@mock.patch('apparate.update_databricks_library.get_job_list')
-@mock.patch('apparate.update_databricks_library.get_library_mapping')
-@mock.patch('apparate.update_databricks_library.update_job_libraries')
-@mock.patch('apparate.update_databricks_library.delete_old_versions')
+@mock.patch('stork.update_databricks_library.load_library')
+@mock.patch('stork.update_databricks_library.get_job_list')
+@mock.patch('stork.update_databricks_library.get_library_mapping')
+@mock.patch('stork.update_databricks_library.update_job_libraries')
+@mock.patch('stork.update_databricks_library.delete_old_versions')
 def test_update_databricks_update_jobs(
     delete_mock,
     update_mock,
@@ -314,7 +314,7 @@ def test_update_databricks_update_jobs(
     job_mock.return_value = job_list
     lib_mock.return_value = (library_mapping, id_nums)
 
-    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+    with mock.patch('stork.update_databricks_library.CFG_FILE', cfg):
         update_databricks(
             logger,
             path=path,
@@ -354,10 +354,10 @@ def test_update_databricks_update_jobs(
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_library')
-@mock.patch('apparate.update_databricks_library.get_job_list')
-@mock.patch('apparate.update_databricks_library.get_library_mapping')
-@mock.patch('apparate.update_databricks_library.update_job_libraries')
+@mock.patch('stork.update_databricks_library.load_library')
+@mock.patch('stork.update_databricks_library.get_job_list')
+@mock.patch('stork.update_databricks_library.get_library_mapping')
+@mock.patch('stork.update_databricks_library.update_job_libraries')
 def test_update_databricks_update_jobs_no_cleanup(
     update_mock,
     lib_mock,
@@ -374,7 +374,7 @@ def test_update_databricks_update_jobs_no_cleanup(
     path = 'some/path/to/test-library-1.0.3-py3.6.egg'
     job_mock.return_value = job_list
     lib_mock.return_value = (library_mapping, id_nums)
-    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+    with mock.patch('stork.update_databricks_library.CFG_FILE', cfg):
         update_databricks(
             logger,
             path=path,
@@ -407,7 +407,7 @@ def test_update_databricks_update_jobs_no_cleanup(
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_library')
+@mock.patch('stork.update_databricks_library.load_library')
 def test_update_databricks_only_upload(
     load_mock,
     caplog,
@@ -415,7 +415,7 @@ def test_update_databricks_only_upload(
     host,
     cfg,
 ):
-    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+    with mock.patch('stork.update_databricks_library.CFG_FILE', cfg):
         update_databricks(
             logger,
             path='some/path/to/test-library-1.0.3-py3.6.egg',
@@ -436,9 +436,9 @@ def test_update_databricks_only_upload(
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_library')
+@mock.patch('stork.update_databricks_library.load_library')
 def test_update_databricks_wrong_folder(load_mock, caplog, host, cfg):
-    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+    with mock.patch('stork.update_databricks_library.CFG_FILE', cfg):
         update_databricks(
             logger,
             path='some/path/to/test-library-1.0.3-py3.6.egg',
@@ -459,7 +459,7 @@ def test_update_databricks_wrong_folder(load_mock, caplog, host, cfg):
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_library')
+@mock.patch('stork.update_databricks_library.load_library')
 def test_update_databricks_with_jar_only_upload(
     load_mock,
     caplog,
@@ -467,7 +467,7 @@ def test_update_databricks_with_jar_only_upload(
     host,
     cfg,
 ):
-    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+    with mock.patch('stork.update_databricks_library.CFG_FILE', cfg):
         update_databricks(
             logger,
             path='some/path/to/test-library-1.0.3.jar',
@@ -488,14 +488,14 @@ def test_update_databricks_with_jar_only_upload(
     )
 
 
-@mock.patch('apparate.update_databricks_library.load_library')
+@mock.patch('stork.update_databricks_library.load_library')
 def test_update_databricks_filename_not_match(
     load_mock,
     prod_folder,
     host,
     cfg,
 ):
-    with mock.patch('apparate.update_databricks_library.CFG_FILE', cfg):
+    with mock.patch('stork.update_databricks_library.CFG_FILE', cfg):
         with pytest.raises(FileNameError) as err:
             update_databricks(
                 logger,
