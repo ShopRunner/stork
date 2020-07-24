@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project uses [Semantic Versioning](http://semver.org/).
 
 
+# [3.0.1] - 2020-07-24
+# Fixed
+ - fixed readthedocs link + build
+ - re-compiled dependencies to fix security issue in a pinned dependency
+ - removed requirements-read-the-docs.txt (no longer needed now that stork is installed in requirements-dev.txt)
+
 # [3.0.0] - 2020-07-23
 # Changed
  - renamed repo to stork
