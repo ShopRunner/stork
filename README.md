@@ -1,6 +1,9 @@
 # Stork
 Make your libraries magically appear in Databricks.
 
+![Python package](https://github.com/ShopRunner/stork/workflows/Python%20package/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/stork-library/badge/?version=latest)](https://stork-library.readthedocs.io/en/latest/?badge=latest)
+
 
 ## Why we built this
 
@@ -29,7 +32,7 @@ Where the first number in the version (in this case `1`) is a major version sign
 
 Stork is a tool to manage libraries in Databricks in an automated fashion. It allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs.
 
-For a more detailed API and tutorials, check out the [docs](https://stork.readthedocs.io/en/latest/index.html).
+For a more detailed API and tutorials, check out the [docs](https://stork-library.readthedocs.io/en/latest/index.html).
 
 ## Installation
 
@@ -72,4 +75,4 @@ If you try to upload a library to Databricks that already exists there with the 
 ## Contributing
 See a way for stork to improve? We welcome contributions in the form of issues or pull requests!
 
-Please check out the [contributing](https://stork.readthedocs.io/en/latest/contrib.html) page for more information.
+Please check out the [contributing](https://stork-library.readthedocs.io/en/latest/contrib.html) page for more information.

@@ -47,10 +47,11 @@ release = __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'numpydoc',
+    'sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinxcontrib.programoutput',
+    'numpydoc',  # numpydoc extension has to be last
 ]
 
 # Add any paths that contain templates here, relative to this directory.
