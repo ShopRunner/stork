@@ -1,7 +1,7 @@
 import click
 
 from . import __version__
-from .cli_commands import upload, upload_and_update
+from .cli_commands import create_cluster, upload, upload_and_update
 from .configure import configure
 
 
@@ -20,5 +20,6 @@ def cli(version):
 
 
 cli.add_command(configure)
+cli.add_command(create_cluster)
 cli.add_command(upload)
 cli.add_command(upload_and_update)

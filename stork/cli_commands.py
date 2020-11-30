@@ -5,6 +5,7 @@ import click_log
 from configparser import NoOptionError
 
 from .configure import _load_config, CFG_FILE, PROFILE
+from .create_debug_job_cluster import create_job_library
 from .update_databricks_library import update_databricks
 
 logger = logging.getLogger(__name__)
@@ -133,4 +134,32 @@ def upload_and_update(path, token, cleanup):
         folder,
         update_jobs=True,
         cleanup=cleanup
+    )
+
+
+@click.command(short_help='create a cluster based on a job_id')
+@click.option(
+    '-j',
+    '--job_id',
+    help='job id of job you want to debug',
+    required=True
+)
+@click.option(
+    '-t',
+    '--token',
+    help=('Databricks API key - '
+          'optional, read from `.storkcfg` if not provided'),
+)
+@click_log.simple_verbosity_option(logger)
+def create_cluster(job_id, token):
+    """
+    Create a cluster based on a job id
+    """
+    config = _load_config(CFG_FILE)
+    token = _resolve_input(token, 'token', 'token', config)
+
+    create_job_library(
+        logger,
+        job_id,
+        token
     )
