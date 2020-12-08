@@ -166,12 +166,16 @@ def create_job_library(logger, job_id, token):
         
         cluster_id, cluster_name = create_new_cluster(job_id, cluster_config, token, host)
 
+        logger.info(
+            f'Cluster will come up in 20 seconds'
+        )
+
         time.sleep(20) # Need to wait for cluster to be up for awhile before attaching libraries
 
         attach_job_libraries_to_cluster(cluster_id, cluster_config, token, host)
 
         logger.info(
-            f'new cluster {cluster_name} created on Databricks'
+            f'New cluster {cluster_name} created on Databricks'
         )
     except APIError as err:
         raise err
