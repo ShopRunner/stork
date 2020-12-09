@@ -43,7 +43,7 @@ def get_job_cluster_config(job_id, token, host):
         return cluster_config
 
 
-def create_new_cluster(job_id, cluster_config, token, host):
+def create_new_cluster(job_id, cluster_name, cluster_config, token, host):
     """
     Creat a new cluster based on a job cluster config.
 
@@ -51,6 +51,8 @@ def create_new_cluster(job_id, cluster_config, token, host):
     ----------
     job_id: int
         id of the job you are trying to debug
+    cluster_name: string
+        Name for your cluster, will be default if None
     cluster_config: dict
         dict containing the config details of the job cluster
     token: string
@@ -62,11 +64,12 @@ def create_new_cluster(job_id, cluster_config, token, host):
     ------------
     Creates a new cluster on Databricks
     """
-    current_time = time.gmtime()
+    if cluster_name is None:
+        current_time = time.gmtime()
 
-    current_time_formatted = time.strftime('%Y%m%d_%H%M%S', current_time)
+        current_time_formatted = time.strftime('%Y%m%d_%H%M%S', current_time)
 
-    cluster_name = f'private-debug-job-{job_id}-{current_time_formatted}'
+        cluster_name = f'private-debug-job-{job_id}-{current_time_formatted}'
 
     data={
         'cluster_name': cluster_name,
@@ -135,7 +138,7 @@ def attach_job_libraries_to_cluster(cluster_id, cluster_config, token, host):
         raise APIError(res)
 
 
-def create_job_library(logger, job_id, token):
+def create_job_library(logger, job_id, cluster_name, token):
     """
     Pull down a job cluster config, creates a new cluster with that config,
     and attaches job libraries to cluster
@@ -146,6 +149,8 @@ def create_job_library(logger, job_id, token):
         configured in cli_commands.py
     job_id: int
         id of the job you are trying to debug
+    cluster_name: string
+        Name for your cluster, will be default if None
     token: string
         Databricks API key
 
@@ -164,7 +169,13 @@ def create_job_library(logger, job_id, token):
     try:
         cluster_config = get_job_cluster_config(job_id, token, host)
         
-        cluster_id, cluster_name = create_new_cluster(job_id, cluster_config, token, host)
+        cluster_id, cluster_name = create_new_cluster(
+            job_id,
+            cluster_name,
+            cluster_config,
+            token,
+            host
+        )
 
         logger.info(
             f'Cluster will come up in 20 seconds'

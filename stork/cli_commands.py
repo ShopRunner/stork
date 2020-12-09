@@ -145,13 +145,20 @@ def upload_and_update(path, token, cleanup):
     required=True
 )
 @click.option(
+    '-c',
+    '--cluster_name',
+    default=None,
+    help=('Cluster Name- '
+          'optional, use default value if not provided'),
+)
+@click.option(
     '-t',
     '--token',
     help=('Databricks API key - '
           'optional, read from `.storkcfg` if not provided'),
 )
 @click_log.simple_verbosity_option(logger)
-def create_cluster(job_id, token):
+def create_cluster(job_id, cluster_name, token):
     """
     Create a cluster based on a job id
     """
@@ -161,5 +168,6 @@ def create_cluster(job_id, token):
     create_job_library(
         logger,
         job_id,
+        cluster_name,
         token
     )
