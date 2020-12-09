@@ -50,7 +50,7 @@ For more info about usage, check out the :ref:`tutorial`.
 Create cluster
 ------
 
-``create-cluster`` can be used anytime by anyone and promises not break anything. It simply creates a new cluster and will create a second cluster if a cluster with the same name alreay exists. 
+``create-cluster`` can be used anytime by anyone and promises not to break anything. It simply creates a new cluster and will create a second cluster if a cluster with the same name alreay exists. 
 
 If you've set up your ``.storkcfg`` file using the ``configure`` command, you only need to provide a job_id and optionally a cluster_name, but can also override the default api token if desired.
 
