@@ -3,12 +3,10 @@ This file handles all the logic and API calls involved in creating
 an interactive Databricks cluster configured as a specific job cluster.
 """
 import json
-import re
 import time
 
 import requests
 from configparser import NoOptionError
-from simplejson.errors import JSONDecodeError
 
 from .configure import _load_config, CFG_FILE, PROFILE
 from .update_databricks_library import APIError
@@ -37,9 +35,10 @@ def get_job_cluster_config(job_id, token, host):
     else:
         cluster_config = res.json()['settings']
         if 'existing_cluster_id' in cluster_config.keys():
-            raise Exception(f'''
-                This job uses an interactive cluster {cluster_config['existing_cluster_id']}.
-            ''')
+            raise Exception(f"""
+                This job uses an interactive cluster:
+                {cluster_config['existing_cluster_id']}.
+            """)
         return cluster_config
 
 
@@ -59,7 +58,7 @@ def create_new_cluster(job_id, cluster_name, cluster_config, token, host):
         Databricks API key
     host: string
         Databricks host (e.g. https://my-organization.cloud.databricks.com)
-    
+
     Side Effects
     ------------
     Creates a new cluster on Databricks
@@ -71,7 +70,7 @@ def create_new_cluster(job_id, cluster_name, cluster_config, token, host):
 
         cluster_name = f'private-debug-job-{job_id}-{current_time_formatted}'
 
-    data={
+    data = {
         'cluster_name': cluster_name,
         'spark_version': cluster_config['new_cluster']['spark_version'],
         'node_type_id': cluster_config['new_cluster']['node_type_id'],
@@ -83,13 +82,15 @@ def create_new_cluster(job_id, cluster_name, cluster_config, token, host):
         data['autoscale'] = cluster_config['new_cluster']['autoscale']
 
     if 'driver_node_type_id' in cluster_config['new_cluster'].keys():
-        data['driver_node_type_id'] = cluster_config['new_cluster']['driver_node_type_id']
+        data['driver_node_type_id'] = (
+            cluster_config['new_cluster']['driver_node_type_id']
+        )
 
     if 'num_workers' in cluster_config['new_cluster'].keys():
         data['num_workers'] = cluster_config['new_cluster']['num_workers']
 
     if 'spark_conf' in cluster_config['new_cluster'].keys():
-        data['spark_conf'] =  cluster_config['new_cluster']['spark_conf']
+        data['spark_conf'] = cluster_config['new_cluster']['spark_conf']
 
     res = requests.post(
         host + '/api/2.0/clusters/create',
@@ -118,7 +119,7 @@ def attach_job_libraries_to_cluster(cluster_id, cluster_config, token, host):
         Databricks API key
     host: string
         Databricks host (e.g. https://my-organization.cloud.databricks.com)
-    
+
     Side Effects
     ------------
     Attaches libraries to a cluster on Databricks
@@ -168,7 +169,7 @@ def create_job_library(logger, job_id, cluster_name, token):
 
     try:
         cluster_config = get_job_cluster_config(job_id, token, host)
-        
+
         cluster_id, cluster_name = create_new_cluster(
             job_id,
             cluster_name,
@@ -178,12 +179,17 @@ def create_job_library(logger, job_id, cluster_name, token):
         )
 
         logger.info(
-            f'Cluster will come up in 20 seconds'
+            f'Cluster {cluster_name} will come up in 20 seconds'
         )
 
-        time.sleep(20) # Need to wait for cluster to be up for awhile before attaching libraries
+        time.sleep(20)  # Wait for cluster to be up before attaching libraries
 
-        attach_job_libraries_to_cluster(cluster_id, cluster_config, token, host)
+        attach_job_libraries_to_cluster(
+            cluster_id,
+            cluster_config,
+            token,
+            host
+        )
 
         logger.info(
             f'New cluster {cluster_name} created on Databricks'
