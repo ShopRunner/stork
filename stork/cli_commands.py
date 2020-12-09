@@ -5,7 +5,7 @@ import click_log
 from configparser import NoOptionError
 
 from .configure import _load_config, CFG_FILE, PROFILE
-from .create_debug_job_cluster import create_job_library
+from .create_job_cluster import create_job_library
 from .update_databricks_library import update_databricks
 
 logger = logging.getLogger(__name__)
