@@ -30,7 +30,7 @@ Where the first number in the version (in this case `1`) is a major version sign
 
 ## What it does
 
-Stork is a tool to provide command line helpers for Databricks. One set of commands is for managing libraries in Databricks in an automated fashion. It allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs. Another command allows you to create an interactive cluster that replicates the settings used on a job cluster.
+Stork is a set of command line helpers for Databricks. Some commands are for managing libraries in Databricks in an automated fashion. This allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs. Another command allows you to create an interactive cluster that replicates the settings used on a job cluster.
 
 For a more detailed API and tutorials, check out the [docs](https://stork-library.readthedocs.io/en/latest/index.html).
 
