@@ -46,3 +46,14 @@ In the same way as ``upload``, if you try to upload a library to Databricks that
 .. command-output:: stork upload-and-update --help
 
 For more info about usage, check out the :ref:`tutorial`.
+
+Create cluster
+------
+
+``create-cluster`` can be used anytime by anyone and promises not to break anything. It simply creates a new cluster and will create a second cluster if a cluster with the same name alreay exists. Note: this command calls APIs on a Databricks account that runs AWS (not Azure); there is not guarantee it will work with an Azure Databricks account.
+
+If you've set up your ``.storkcfg`` file using the ``configure`` command, you only need to provide a job_id and optionally a cluster_name, but can also override the default api token if desired.
+
+This command will print out a message letting you know the name of the cluster that was created.
+
+.. command-output:: stork create-cluster --help

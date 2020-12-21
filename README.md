@@ -1,5 +1,5 @@
 # Stork
-Make your libraries magically appear in Databricks.
+Command line helpers for Databricks!
 
 ![Python package](https://github.com/ShopRunner/stork/workflows/Python%20package/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/stork-library/badge/?version=latest)](https://stork-library.readthedocs.io/en/latest/?badge=latest)
@@ -30,7 +30,7 @@ Where the first number in the version (in this case `1`) is a major version sign
 
 ## What it does
 
-Stork is a tool to manage libraries in Databricks in an automated fashion. It allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs.
+Stork is a set of command line helpers for Databricks. Some commands are for managing libraries in Databricks in an automated fashion. This allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs. Another command allows you to create an interactive cluster that replicates the settings used on a job cluster.
 
 For a more detailed API and tutorials, check out the [docs](https://stork-library.readthedocs.io/en/latest/index.html).
 
@@ -70,7 +70,6 @@ The API tokens can be generated in Databricks under Account Settings -> Access T
 While libraries can be uploaded to folders other than your specified production library, no libraries outside of this folder will ever be deleted and no jobs using libraries outside of this folder will be updated.
 
 If you try to upload a library to Databricks that already exists there with the same version, a warning will be printed instructing the user to update the version if a change has been made. Without a version change the new library will not be uploaded.
-
 
 ## Contributing
 See a way for stork to improve? We welcome contributions in the form of issues or pull requests!

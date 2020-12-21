@@ -6,13 +6,12 @@
 Welcome to stork's documentation!
 ====================================
 
-Make your libraries magically appear in Databricks.
+Command line helpers for Databricks!
 
 What is stork?
 -----------------
 
-Stork is a tool to manage libraries in Databricks in an automated fashion. It allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs. To learn more, check out :ref:`why`.
-
+Stork is a set of command line helpers for Databricks. Some commands are for managing libraries in Databricks in an automated fashion. This allows you to move away from the point-and-click interface for your development work and for deploying production-level libraries for use in scheduled Databricks jobs. Another command allows you to create an interactive cluster that replicates the settings used on a job cluster.
 
 .. _install:
 
