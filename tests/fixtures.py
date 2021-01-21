@@ -255,37 +255,37 @@ def workspace_list_response(prod_folder):
         'objects': [
             {
                 'object_type': 'LIBRARY',
-                'path': '/PROD_FOLDER/awesome_library_b-4.2.3',
+                'path': f'/{prod_folder}/awesome_library_b-4.2.3',
                 'object_id': 1
             },
             {
                 'object_type': 'LIBRARY',
-                'path': '/PROD_FOLDER/awesome_library_a-0.10.1',
+                'path': f'/{prod_folder}/awesome_library_a-0.10.1',
                 'object_id': 2
             },
             {
                 'object_type': 'LIBRARY',
-                'path': '/PROD_FOLDER/test-library-0.0.0',
+                'path': f'/{prod_folder}/test-library-0.0.0',
                 'object_id': 3
             },
             {
                 'object_type': 'LIBRARY',
-                'path': '/PROD_FOLDER/test-library-plus-stuff-0.0.0',
+                'path': f'/{prod_folder}/test-library-plus-stuff-0.0.0',
                 'object_id': 4
             },
             {
                 'object_type': 'LIBRARY',
-                'path': '/PROD_FOLDER/test-library-1.0.1',
+                'path': f'/{prod_folder}/test-library-1.0.1',
                 'object_id': 5
             },
             {
                 'object_type': 'LIBRARY',
-                'path': '/PROD_FOLDER/test-library-1.0.2',
+                'path': f'/{prod_folder}/test-library-1.0.2',
                 'object_id': 6
             },
             {
                 'object_type': 'LIBRARY',
-                'path': '/PROD_FOLDER/test-library-1.0.3',
+                'path': f'/{prod_folder}/test-library-1.0.3',
                 'object_id': 7
             },
         ]
