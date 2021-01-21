@@ -4,12 +4,10 @@ The core of the program, update_databricks_library handles all the logic and
  in Databricks.
 """
 import json
-import re
 from os.path import basename
 
 import requests
 from configparser import NoOptionError
-from simplejson.errors import JSONDecodeError
 
 from .api_error import APIError
 from .configure import _load_config, CFG_FILE, PROFILE
@@ -156,17 +154,14 @@ def get_library_mapping(logger, prod_folder, token, host):
         for file in file_list:
             if file['object_type'] == 'LIBRARY':
                 library_id = file['object_id']
-                try:
-                    status_res = (
-                        requests
-                        .get(
-                            host + f'/api/1.2/libraries/status?libraryId={library_id}',
-                            auth=('token', token),
-                        )
+                status_res = (
+                    requests
+                    .get(
+                        host + '/api/1.2/libraries/status?libraryId={}'
+                        .format(library_id),
+                        auth=('token', token),
                     )
-                except:
-                    logger.debug(f'Status request for library: {library_id} failed')
-                    continue
+                )
                 if status_res.status_code == 200:
                     library_info = status_res.json()
                     if library_info['libType'] == 'python-egg':

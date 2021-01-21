@@ -1,3 +1,6 @@
+from simplejson.errors import JSONDecodeError
+
+
 class APIError(Exception):
     """
     exception to handle unifying two generations of API error responses

@@ -1,3 +1,6 @@
+import re
+
+
 class FileNameError(Exception):
     """
     exception to handle when filename is not of correct pattern
