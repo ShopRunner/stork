@@ -7,9 +7,10 @@ import responses
 import requests
 
 from .unittest_helpers import strip_whitespace
-from stork.file_name import     FileNameError, FileNameMatch
 from stork.update_databricks_library import (
     APIError,
+    FileNameError,
+    FileNameMatch,
     load_library,
     get_job_list,
     get_library_mapping,
