@@ -7,10 +7,9 @@ import responses
 import requests
 
 from .unittest_helpers import strip_whitespace
+from stork.file_name import     FileNameError, FileNameMatch
 from stork.update_databricks_library import (
     APIError,
-    FileNameError,
-    FileNameMatch,
     load_library,
     get_job_list,
     get_library_mapping,
@@ -123,7 +122,7 @@ def test_get_job_list(library_mapping, job_list, job_list_response, host):
 
 @responses.activate
 def test_get_library_mapping(
-    library_list_response,
+    workspace_list_response,
     library_1,
     library_2,
     library_3,
@@ -131,7 +130,6 @@ def test_get_library_mapping(
     library_5,
     library_6,
     library_7,
-    library_8,
     id_nums,
     library_mapping,
     host,
@@ -139,9 +137,9 @@ def test_get_library_mapping(
 ):
     responses.add(
         responses.GET,
-        host + '/api/1.2/libraries/list',
+        host + '/api/2.0/workspace/list',
         status=200,
-        json=library_list_response,
+        json=workspace_list_response,
     )
     for i, lib in enumerate([
         library_1,
@@ -150,8 +148,7 @@ def test_get_library_mapping(
         library_4,
         library_5,
         library_6,
-        library_7,
-        library_8,
+        library_7
     ]):
         responses.add(
             responses.GET,
@@ -167,7 +164,7 @@ def test_get_library_mapping(
         prod_folder=prod_folder,
     )
 
-    assert len(responses.calls) == 9
+    assert len(responses.calls) == 8
     assert id_nums == id_nums_actual
     assert library_mapping == library_map_actual
 
@@ -229,7 +226,7 @@ def test_delete_old_versions(id_nums, host, prod_folder):
 
     assert len(responses.calls) == 2
     actual_responses = [res.response.text for res in responses.calls]
-    assert set(actual_responses) == {'libraryId=6', 'libraryId=7'}
+    assert set(actual_responses) == {'libraryId=5', 'libraryId=6'}
     assert (
         set(actual_deleted_libraries) ==
         {'test-library-1.0.1.egg', 'test-library-1.0.2.egg'}

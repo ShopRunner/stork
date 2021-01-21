@@ -13,34 +13,34 @@ def delete_library_response_list():
 @pytest.fixture
 def id_nums():
     id_nums = {
-        'test-library-1.0.3': {
-            'name_match': FileNameMatch('test-library-1.0.3.egg'),
-            'id_num': '8',
-        },
-        'test-library-1.0.2': {
-            'name_match': FileNameMatch('test-library-1.0.2.egg'),
-            'id_num': '7',
-        },
-        'test-library-1.0.1': {
-            'name_match': FileNameMatch('test-library-1.0.1.egg'),
-            'id_num': '6',
-        },
-        'test-library-plus-stuff-0.0.0': {
-            'name_match': FileNameMatch('test-library-plus-stuff-0.0.0.egg'),
-            'id_num': '4',
-        },
-        'test-library-0.0.0': {
-            'name_match': FileNameMatch('test-library-0.0.0.egg'),
-            'id_num': '3',
+        'awesome_library_b-4.2.3': {
+            'name_match': FileNameMatch('awesome_library_b-4.2.3.egg'),
+            'id_num': 1,
         },
         'awesome_library_a-0.10.1': {
             'name_match': FileNameMatch('awesome_library_a-0.10.1.egg'),
-            'id_num': '2',
+            'id_num': 2,
         },
-        'awesome_library_b-4.2.3': {
-            'name_match': FileNameMatch('awesome_library_b-4.2.3.egg'),
-            'id_num': '1',
+        'test-library-0.0.0': {
+            'name_match': FileNameMatch('test-library-0.0.0.egg'),
+            'id_num': 3,
         },
+        'test-library-plus-stuff-0.0.0': {
+            'name_match': FileNameMatch('test-library-plus-stuff-0.0.0.egg'),
+            'id_num': 4,
+        },
+        'test-library-1.0.1': {
+            'name_match': FileNameMatch('test-library-1.0.1.egg'),
+            'id_num': 5,
+        },
+        'test-library-1.0.2': {
+            'name_match': FileNameMatch('test-library-1.0.2.egg'),
+            'id_num': 6,
+        },
+        'test-library-1.0.3': {
+            'name_match': FileNameMatch('test-library-1.0.3.egg'),
+            'id_num': 7,
+        }
     }
     return id_nums
 
@@ -214,19 +214,6 @@ def library_4(prod_folder):
 def library_5(prod_folder):
     return {
         'id': '5',
-        'name': 'test-library-1.0.0',
-        'folder': '/Users/my_email@fake_organization.com/libraries',
-        'libType': 'python-egg',
-        'files': ['47fb08a7-test-library_1_0_0_py3_6-e5f8c.egg'],
-        'attachAllClusters': False,
-        'statuses': [],
-    }
-
-
-@pytest.fixture
-def library_6(prod_folder):
-    return {
-        'id': '6',
         'name': 'test-library-1.0.1',
         'folder': prod_folder,
         'libType': 'python-egg',
@@ -237,9 +224,9 @@ def library_6(prod_folder):
 
 
 @pytest.fixture
-def library_7(prod_folder):
+def library_6(prod_folder):
     return {
-        'id': '7',
+        'id': '6',
         'name': 'test-library-1.0.2',
         'folder': prod_folder,
         'libType': 'python-egg',
@@ -250,9 +237,9 @@ def library_7(prod_folder):
 
 
 @pytest.fixture
-def library_8(prod_folder):
+def library_7(prod_folder):
     return {
-        'id': '8',
+        'id': '7',
         'name': 'test-library-1.0.3',
         'folder': prod_folder,
         'libType': 'python-egg',
@@ -263,51 +250,48 @@ def library_8(prod_folder):
 
 
 @pytest.fixture
-def library_list_response(prod_folder):
-    library_list_response = [
-        {
-            'id': '1',
-            'name': 'awesome_library_b-4.2.3',
-            'folder': prod_folder,
-        },
-        {
-            'id': '2',
-            'name': 'awesome_library_a-0.10.1',
-            'folder': prod_folder,
-        },
-        {
-            'id': '3',
-            'name': 'test-library-0.0.0',
-            'folder': prod_folder,
-        },
-        {
-            'id': '4',
-            'name': 'test-library-plus-stuff-0.0.0',
-            'folder': prod_folder,
-        },
-        {
-            'id': '5',
-            'name': 'test-library-1.0.0',
-            'folder': '/Users/my_email@fake_organization.com/libraries',
-        },
-        {
-            'id': '6',
-            'name': 'test-library-1.0.1',
-            'folder': prod_folder,
-        },
-        {
-            'id': '7',
-            'name': 'test-library-1.0.2',
-            'folder': prod_folder,
-        },
-        {
-            'id': '8',
-            'name': 'test-library-1.0.3',
-            'folder': prod_folder,
-        },
-    ]
+def workspace_list_response(prod_folder):
+    workspace_list_response = {
+        'objects': [
+            {
+                'object_type': 'LIBRARY',
+                'path': '/PROD_FOLDER/awesome_library_b-4.2.3',
+                'object_id': 1
+            },
+            {
+                'object_type': 'LIBRARY',
+                'path': '/PROD_FOLDER/awesome_library_a-0.10.1',
+                'object_id': 2
+            },
+            {
+                'object_type': 'LIBRARY',
+                'path': '/PROD_FOLDER/test-library-0.0.0',
+                'object_id': 3
+            },
+            {
+                'object_type': 'LIBRARY',
+                'path': '/PROD_FOLDER/test-library-plus-stuff-0.0.0',
+                'object_id': 4
+            },
+            {
+                'object_type': 'LIBRARY',
+                'path': '/PROD_FOLDER/test-library-1.0.1',
+                'object_id': 5
+            },
+            {
+                'object_type': 'LIBRARY',
+                'path': '/PROD_FOLDER/test-library-1.0.2',
+                'object_id': 6
+            },
+            {
+                'object_type': 'LIBRARY',
+                'path': '/PROD_FOLDER/test-library-1.0.3',
+                'object_id': 7
+            },
+        ]
+    }
 
-    return library_list_response
+    return workspace_list_response
 
 
 @pytest.fixture
@@ -315,8 +299,8 @@ def library_mapping():
     library_mapping = {
         '47fb08a7-test-library_1_0_2_py3_6-e5f8c.egg': FileNameMatch('test-library-1.0.2.egg'),
         '47fb08a7-test-library_1_0_1_py3_6-e5f8c.egg': FileNameMatch('test-library-1.0.1.egg'),
-        '01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg': FileNameMatch('test-library-plus-stuff-0.0.0.egg'),
         '47fb08a7-test-library_0_0_0_py3_6-e5f8c.egg': FileNameMatch('test-library-0.0.0.egg'),
+        '01832402-test-library-plus-stuff_0_0_0_py3_6-e5f8c.egg': FileNameMatch('test-library-plus-stuff-0.0.0.egg'),
         '996c949b-awesome_library_a_0_10_1_py3_6-266f.egg': FileNameMatch('awesome_library_a-0.10.1.egg'),
         '47fb08a7-awesome_library_b_4_2_3_py3_6-e5f8c.egg': FileNameMatch('awesome_library_b-4.2.3.egg'),
         '47fb08a7-test-library_1_0_3_py3_6-e5f8c.egg': FileNameMatch('test-library-1.0.3.egg'),
