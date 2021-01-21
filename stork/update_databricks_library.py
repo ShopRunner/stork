@@ -356,7 +356,6 @@ def update_databricks(logger, path, token, folder, update_jobs, cleanup):
                          ' to get set up')
     try:
         prod_folder = config.get(PROFILE, 'prod_folder')
-        prod_folder = '/Shared/DS_libraries'
     except NoOptionError:
         raise ValueError('no prod_folder provided: please run '
                          '`stork configure` to get set up')
