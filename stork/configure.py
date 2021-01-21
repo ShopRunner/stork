@@ -56,6 +56,10 @@ def _update_value(config, key, instruction, is_sensitive):
         if proposed[-1] == '/':
             proposed = proposed[:-1]
 
+    if key == 'prod_folder':
+        if proposed[0] != '/':
+            proposed = '/' + proposed
+
     if key == 'host':
         if 'http' != proposed[:4]:
             proposed = click.prompt(
