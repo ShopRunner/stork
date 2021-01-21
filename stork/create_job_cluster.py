@@ -8,8 +8,8 @@ import time
 import requests
 from configparser import NoOptionError
 
+from .api_error import APIError
 from .configure import _load_config, CFG_FILE, PROFILE
-from .update_databricks_library import APIError
 
 
 def get_job_cluster_config(job_id, token, host):
