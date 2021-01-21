@@ -330,7 +330,7 @@ def existing_config():
     existing_config['DEFAULT'] = {
         'host': 'test_host',
         'token': 'test_token',
-        'prod_folder': 'test_folder',
+        'prod_folder': '/test_folder',
     }
     return existing_config
 

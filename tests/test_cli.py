@@ -19,7 +19,7 @@ def test_configure_no_existing_config():
         'https://test_host\n'
         'Databricks API token: \n'
         'Repeat for confirmation: \n'
-        'Databricks folder for production libraries: test_folder\n'
+        'Databricks folder for production libraries: /test_folder\n'
     )
 
     filename = join(expanduser('~'), '.storkcfg')
@@ -29,7 +29,7 @@ def test_configure_no_existing_config():
         mock.call().write('[DEFAULT]\n'),
         mock.call().write('host = https://test_host\n'),
         mock.call().write('token = test_token\n'),
-        mock.call().write('prod_folder = test_folder\n'),
+        mock.call().write('prod_folder = /test_folder\n'),
         mock.call().write('\n'),
     ]
 
@@ -41,7 +41,7 @@ def test_configure_no_existing_config():
                 'https://test_host\n'
                 'test_token\n'
                 'test_token\n'
-                'test_folder\n'
+                '/test_folder\n'
             ),
         )
         m_open.assert_has_calls(expected_call_list, any_order=True)
@@ -56,7 +56,7 @@ def test_configure_extra_slash_in_host():
         'https://test_host/\n'
         'Databricks API token: \n'
         'Repeat for confirmation: \n'
-        'Databricks folder for production libraries: test_folder\n'
+        'Databricks folder for production libraries: /test_folder\n'
     )
 
     filename = join(expanduser('~'), '.storkcfg')
@@ -66,7 +66,7 @@ def test_configure_extra_slash_in_host():
         mock.call().write('[DEFAULT]\n'),
         mock.call().write('host = https://test_host\n'),
         mock.call().write('token = test_token\n'),
-        mock.call().write('prod_folder = test_folder\n'),
+        mock.call().write('prod_folder = /test_folder\n'),
         mock.call().write('\n'),
     ]
 
@@ -78,7 +78,7 @@ def test_configure_extra_slash_in_host():
                 'https://test_host/\n'
                 'test_token\n'
                 'test_token\n'
-                'test_folder\n'
+                '/test_folder\n'
             ),
         )
         m_open.assert_has_calls(expected_call_list, any_order=True)
@@ -93,7 +93,7 @@ def test_configure_extra_slash_in_folder():
         'https://test_host\n'
         'Databricks API token: \n'
         'Repeat for confirmation: \n'
-        'Databricks folder for production libraries: test_folder/\n'
+        'Databricks folder for production libraries: /test_folder/\n'
     )
 
     filename = join(expanduser('~'), '.storkcfg')
@@ -103,7 +103,7 @@ def test_configure_extra_slash_in_folder():
         mock.call().write('[DEFAULT]\n'),
         mock.call().write('host = https://test_host\n'),
         mock.call().write('token = test_token\n'),
-        mock.call().write('prod_folder = test_folder\n'),
+        mock.call().write('prod_folder = /test_folder\n'),
         mock.call().write('\n'),
     ]
 
@@ -115,7 +115,7 @@ def test_configure_extra_slash_in_folder():
                 'https://test_host\n'
                 'test_token\n'
                 'test_token\n'
-                'test_folder/\n'
+                '/test_folder/\n'
             ),
         )
         m_open.assert_has_calls(expected_call_list, any_order=True)
@@ -132,7 +132,7 @@ def test_configure_no_http_in_host():
         'with http: https://test_host\n'
         'Databricks API token: \n'
         'Repeat for confirmation: \n'
-        'Databricks folder for production libraries: test_folder\n'
+        'Databricks folder for production libraries: /test_folder\n'
     )
 
     filename = join(expanduser('~'), '.storkcfg')
@@ -142,7 +142,7 @@ def test_configure_no_http_in_host():
         mock.call().write('[DEFAULT]\n'),
         mock.call().write('host = https://test_host\n'),
         mock.call().write('token = test_token\n'),
-        mock.call().write('prod_folder = test_folder\n'),
+        mock.call().write('prod_folder = /test_folder\n'),
         mock.call().write('\n'),
     ]
 
@@ -155,7 +155,7 @@ def test_configure_no_http_in_host():
                 'https://test_host\n'
                 'test_token\n'
                 'test_token\n'
-                'test_folder\n'
+                '/test_folder\n'
             ),
         )
         m_open.assert_has_calls(expected_call_list, any_order=True)
@@ -181,7 +181,7 @@ def test_upload(update_databricks_mock, config_mock, existing_config):
         logger,
         '/path/to/egg',
         'test_token',
-        'test_folder',
+        '/test_folder',
         cleanup=False,
         update_jobs=False,
     )
@@ -278,7 +278,7 @@ def test_upload_and_update_cleanup(
         logger,
         '/path/to/egg',
         'test_token',
-        'test_folder',
+        '/test_folder',
         cleanup=True,
         update_jobs=True,
     )
@@ -306,7 +306,7 @@ def test_upload_and_update_no_cleanup(
         logger,
         '/path/to/egg',
         'test_token',
-        'test_folder',
+        '/test_folder',
         cleanup=False,
         update_jobs=True,
     )
