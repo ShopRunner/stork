@@ -1,7 +1,8 @@
 # Stork
 Command line helpers for Databricks!
 
-![Python package](https://github.com/ShopRunner/stork/workflows/Python%20package/badge.svg)
+[![PyPI version](https://badge.fury.io/py/stork.svg)](https://badge.fury.io/py/stork)
+[![Python package](https://github.com/ShopRunner/stork/workflows/Python%20package/badge.svg)](https://github.com/ShopRunner/stork/actions/workflows/prod.yaml)
 [![Documentation Status](https://readthedocs.org/projects/stork-library/badge/?version=latest)](https://stork-library.readthedocs.io/en/latest/?badge=latest)
 
 
