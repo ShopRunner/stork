@@ -5,51 +5,109 @@
 #    pip-compile requirements-dev.in
 #
 -e file:.                 # via -r requirements-dev.in
-alabaster==0.7.12         # via sphinx
-attrs==19.3.0             # via pytest
-babel==2.8.0              # via sphinx
-certifi==2018.10.15       # via requests
-chardet==3.0.4            # via requests
-click-log==0.3.2          # via stork
-click==7.0                # via click-log, stork
-configparser==3.5.0       # via stork
-coverage==5.1             # via pytest-cov
-docutils==0.16            # via sphinx
-flake8==3.8.3             # via stork
-idna==2.7                 # via requests
-imagesize==1.2.0          # via sphinx
-importlib-metadata==1.6.1  # via flake8, pluggy, pytest
-jinja2==2.11.2            # via numpydoc, sphinx
-markupsafe==1.1.1         # via jinja2
-mccabe==0.6.1             # via flake8
-more-itertools==8.4.0     # via pytest
-numpydoc==1.0.0           # via stork
-packaging==20.4           # via pytest, sphinx
-pluggy==0.13.1            # via pytest
-py==1.8.2                 # via pytest
-pycodestyle==2.6.0        # via flake8
-pyflakes==2.2.0           # via flake8
-pygments==2.6.1           # via sphinx
-pyparsing==2.4.7          # via packaging
-pytest-cov==2.10.0        # via stork
-pytest==5.4.3             # via pytest-cov, stork
-pytz==2020.1              # via babel
-requests==2.20.1          # via responses, sphinx, stork
-responses==0.10.15        # via stork
-simplejson==3.16.0        # via stork
-six==1.15.0               # via packaging, responses
-snowballstemmer==2.0.0    # via sphinx
-sphinx==3.1.1             # via numpydoc, sphinxcontrib-programoutput, stork
-sphinxcontrib-applehelp==1.0.2  # via sphinx
-sphinxcontrib-devhelp==1.0.2  # via sphinx
-sphinxcontrib-htmlhelp==1.0.3  # via sphinx
-sphinxcontrib-jsmath==1.0.1  # via sphinx
-sphinxcontrib-programoutput==0.16  # via stork
-sphinxcontrib-qthelp==1.0.3  # via sphinx
-sphinxcontrib-serializinghtml==1.1.4  # via sphinx
-urllib3==1.24.2           # via requests
-wcwidth==0.2.4            # via pytest
-zipp==3.1.0               # via importlib-metadata
+    # via -r requirements-dev.in
+alabaster==0.7.12
+    # via sphinx
+attrs==19.3.0
+    # via pytest
+babel==2.8.0
+    # via sphinx
+certifi==2018.10.15
+    # via requests
+chardet==3.0.4
+    # via requests
+click-log==0.3.2
+    # via sanitized-package
+click==7.0
+    # via
+    #   click-log
+    #   sanitized-package
+configparser==3.5.0
+    # via sanitized-package
+coverage==5.1
+    # via pytest-cov
+docutils==0.16
+    # via sphinx
+flake8==3.8.3
+    # via sanitized-package
+idna==2.7
+    # via requests
+imagesize==1.2.0
+    # via sphinx
+jinja2==2.11.2
+    # via
+    #   numpydoc
+    #   sphinx
+markupsafe==1.1.1
+    # via jinja2
+mccabe==0.6.1
+    # via flake8
+more-itertools==8.4.0
+    # via pytest
+numpydoc==1.0.0
+    # via sanitized-package
+packaging==20.4
+    # via
+    #   pytest
+    #   sphinx
+pluggy==0.13.1
+    # via pytest
+py==1.10.0
+    # via pytest
+pycodestyle==2.6.0
+    # via flake8
+pyflakes==2.2.0
+    # via flake8
+pygments==2.6.1
+    # via sphinx
+pyparsing==2.4.7
+    # via packaging
+pytest-cov==2.10.0
+    # via sanitized-package
+pytest==5.4.3
+    # via
+    #   pytest-cov
+    #   sanitized-package
+pytz==2020.1
+    # via babel
+requests==2.20.1
+    # via
+    #   responses
+    #   sanitized-package
+    #   sphinx
+responses==0.10.15
+    # via sanitized-package
+simplejson==3.16.0
+    # via sanitized-package
+six==1.15.0
+    # via
+    #   packaging
+    #   responses
+snowballstemmer==2.0.0
+    # via sphinx
+sphinx==3.1.1
+    # via
+    #   numpydoc
+    #   sanitized-package
+    #   sphinxcontrib-programoutput
+sphinxcontrib-applehelp==1.0.2
+    # via sphinx
+sphinxcontrib-devhelp==1.0.2
+    # via sphinx
+sphinxcontrib-htmlhelp==1.0.3
+    # via sphinx
+sphinxcontrib-jsmath==1.0.1
+    # via sphinx
+sphinxcontrib-programoutput==0.16
+    # via sanitized-package
+sphinxcontrib-qthelp==1.0.3
+    # via sphinx
+sphinxcontrib-serializinghtml==1.1.4
+    # via sphinx
+urllib3==1.24.2
+    # via requests
+wcwidth==0.2.4
+    # via pytest
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
