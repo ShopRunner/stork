@@ -19,7 +19,6 @@ from stork.update_databricks_library import (
     update_databricks,
 )
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -243,6 +242,7 @@ def test_update_databricks_already_exists(
     host,
     cfg,
 ):
+    caplog.set_level(logging.INFO)
     responses.add(
         responses.GET,
         'https://test-api',
@@ -267,6 +267,7 @@ def test_update_databricks_already_exists(
             update_jobs=False,
             cleanup=False,
         )
+
     out = caplog.record_tuples[0][2]
     expected_out = (
         'This version (1.0.1) already exists: '
@@ -307,6 +308,8 @@ def test_update_databricks_update_jobs(
     host,
     cfg,
 ):
+    caplog.set_level(logging.INFO)
+
     path = 'some/path/to/test-library-1.0.3-py3.6.egg'
     delete_mock.return_value = ['test-library-1.0.1', 'test-library-1.0.2']
     job_mock.return_value = job_list
@@ -369,6 +372,8 @@ def test_update_databricks_update_jobs_no_cleanup(
     host,
     cfg,
 ):
+    caplog.set_level(logging.INFO)
+
     path = 'some/path/to/test-library-1.0.3-py3.6.egg'
     job_mock.return_value = job_list
     lib_mock.return_value = (library_mapping, id_nums)
@@ -413,6 +418,8 @@ def test_update_databricks_only_upload(
     host,
     cfg,
 ):
+    caplog.set_level(logging.INFO)
+
     with mock.patch('stork.update_databricks_library.CFG_FILE', cfg):
         update_databricks(
             logger,
@@ -436,6 +443,8 @@ def test_update_databricks_only_upload(
 
 @mock.patch('stork.update_databricks_library.load_library')
 def test_update_databricks_wrong_folder(load_mock, caplog, host, cfg):
+    caplog.set_level(logging.INFO)
+
     with mock.patch('stork.update_databricks_library.CFG_FILE', cfg):
         update_databricks(
             logger,
@@ -465,6 +474,8 @@ def test_update_databricks_with_jar_only_upload(
     host,
     cfg,
 ):
+    caplog.set_level(logging.INFO)
+
     with mock.patch('stork.update_databricks_library.CFG_FILE', cfg):
         update_databricks(
             logger,
