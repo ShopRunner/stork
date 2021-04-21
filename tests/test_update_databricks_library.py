@@ -19,7 +19,6 @@ from stork.update_databricks_library import (
     update_databricks,
 )
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
