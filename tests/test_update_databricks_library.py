@@ -266,7 +266,6 @@ def test_update_databricks_already_exists(
             update_jobs=False,
             cleanup=False,
         )
-
     out = caplog.record_tuples[0][2]
     expected_out = (
         'This version (1.0.1) already exists: '
