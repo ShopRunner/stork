@@ -27,28 +27,29 @@ configparser==5.0.2
 coverage==5.5
     # via pytest-cov
 docutils==0.16
-    # via sphinx
+    # via
+    #   m2r
+    #   sphinx
 flake8==3.9.1
     # via stork
 idna==2.10
     # via requests
 imagesize==1.2.0
     # via sphinx
-importlib-metadata==4.0.0
-    # via
-    #   flake8
-    #   pluggy
-    #   pytest
 iniconfig==1.1.1
     # via pytest
 jinja2==2.11.3
     # via
     #   numpydoc
     #   sphinx
+m2r==0.2.1
+    # via stork
 markupsafe==1.1.1
     # via jinja2
 mccabe==0.6.1
     # via flake8
+mistune==0.8.4
+    # via m2r
 numpydoc==1.1.0
     # via stork
 packaging==20.9
@@ -109,14 +110,10 @@ sphinxcontrib-serializinghtml==1.1.4
     # via sphinx
 toml==0.10.2
     # via pytest
-typing-extensions==3.7.4.3
-    # via importlib-metadata
 urllib3==1.26.4
     # via
     #   requests
     #   responses
-zipp==3.4.1
-    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
