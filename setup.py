@@ -32,7 +32,7 @@ setup(
         'dev': [
             'flake8',
             'numpydoc',
-            'm2r',
+            'm2r2',
             'pytest',
             'pytest-cov',
             'responses',
