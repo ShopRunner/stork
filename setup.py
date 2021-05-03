@@ -6,7 +6,7 @@ with open("stork/_version.py") as version_file:
 with open('README.md') as r:
     readme = r.read()
 
-with open('LICENSE.txt') as l:
+with open('LICENSE') as l:
     license = l.read()
 
 setup(
@@ -20,7 +20,7 @@ setup(
     url='https://github.com/shoprunner/stork',
     license='BSD-3-Clause',
     packages=['stork'],
-    data_files=[('', ['LICENSE.txt'])],
+    data_files=[('', ['LICENSE'])],
     install_requires=[
         'click',
         'click_log',
@@ -32,6 +32,7 @@ setup(
         'dev': [
             'flake8',
             'numpydoc',
+            'm2r2',
             'pytest',
             'pytest-cov',
             'responses',
