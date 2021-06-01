@@ -22,5 +22,5 @@ requests==2.25.1
     # via stork (setup.py)
 simplejson==3.17.2
     # via stork (setup.py)
-urllib3==1.26.4
+urllib3==1.26.5
     # via requests
