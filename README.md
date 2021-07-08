@@ -5,6 +5,9 @@ Command line helpers for Databricks!
 [![Python package](https://github.com/ShopRunner/stork/workflows/Python%20package/badge.svg)](https://github.com/ShopRunner/stork/actions/workflows/prod.yaml)
 [![Documentation Status](https://readthedocs.org/projects/stork-library/badge/?version=latest)](https://stork-library.readthedocs.io/en/latest/?badge=latest)
 
+## Maintenance Note
+⚠️  [2021/07/08] After recent updates to the DataBricks platform it is now possible to install jars and wheels from internal repositories (such as an artifactory instance). We recommend this approach moving forward, since it allows more standard version management and wheels have several advantages over eggs for python libraries. Stork currently still works, but the library management does rely on a deprecated API and thus may break at some point in the future and we will likely not attempt to fix it at that point in time.
+
 
 ## Why we built this
 
