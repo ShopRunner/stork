@@ -18,7 +18,7 @@ configparser==5.0.2
     # via stork (setup.py)
 idna==2.10
     # via requests
-requests==2.25.1
+requests==2.31.0
     # via stork (setup.py)
 simplejson==3.17.2
     # via stork (setup.py)
